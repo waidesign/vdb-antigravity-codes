@@ -1,0 +1,153 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+    content: [
+        './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+        './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+        './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    ],
+    theme: {
+        extend: {
+            colors: {
+                brand: {
+                    primary: 'var(--color-brand-primary)',
+                    secondary: 'var(--color-brand-secondary)',
+                    tertiary: 'var(--color-brand-tertiary)',
+                    accent: 'var(--color-brand-accent)',
+                },
+                neutral: {
+                    100: 'var(--color-neutral-100)',
+                    200: 'var(--color-neutral-200)',
+                    300: 'var(--color-neutral-300)',
+                    400: 'var(--color-neutral-400)',
+                    500: 'var(--color-neutral-500)',
+                    600: 'var(--color-neutral-600)',
+                    700: 'var(--color-neutral-700)',
+                    800: 'var(--color-neutral-800)',
+                    900: 'var(--color-neutral-900)',
+                    white: 'var(--color-neutral-white)',
+                    black: 'var(--color-neutral-black)',
+                },
+                red: {
+                    100: 'var(--color-red-100)',
+                    200: 'var(--color-red-200)',
+                    300: 'var(--color-red-300)',
+                    400: 'var(--color-red-400)',
+                    500: 'var(--color-red-500)',
+                    600: 'var(--color-red-600)',
+                    700: 'var(--color-red-700)',
+                    800: 'var(--color-red-800)',
+                    900: 'var(--color-red-900)',
+                },
+                blue: {
+                    100: 'var(--color-blue-100)',
+                    200: 'var(--color-blue-200)',
+                    300: 'var(--color-blue-300)',
+                    400: 'var(--color-blue-400)',
+                    500: 'var(--color-blue-500)',
+                    600: 'var(--color-blue-600)',
+                    700: 'var(--color-blue-700)',
+                    800: 'var(--color-blue-800)',
+                    900: 'var(--color-blue-900)',
+                },
+                green: {
+                    100: 'var(--color-green-100)',
+                    200: 'var(--color-green-200)',
+                    300: 'var(--color-green-300)',
+                    400: 'var(--color-green-400)',
+                    500: 'var(--color-green-500)',
+                    600: 'var(--color-green-600)',
+                    700: 'var(--color-green-700)',
+                    800: 'var(--color-green-800)',
+                    900: 'var(--color-green-900)',
+                },
+                orange: {
+                    100: 'var(--color-orange-100)',
+                    200: 'var(--color-orange-200)',
+                    300: 'var(--color-orange-300)',
+                    400: 'var(--color-orange-400)',
+                    500: 'var(--color-orange-500)',
+                    600: 'var(--color-orange-600)',
+                    700: 'var(--color-orange-700)',
+                    800: 'var(--color-orange-800)',
+                    900: 'var(--color-orange-900)',
+                },
+                purple: {
+                    100: 'var(--color-purple-100)',
+                    200: 'var(--color-purple-200)',
+                    300: 'var(--color-purple-300)',
+                    400: 'var(--color-purple-400)',
+                    500: 'var(--color-purple-500)',
+                    600: 'var(--color-purple-600)',
+                    700: 'var(--color-purple-700)',
+                    800: 'var(--color-purple-800)',
+                    900: 'var(--color-purple-900)',
+                },
+            },
+            fontFamily: {
+                sans: ['Inter', 'system-ui', 'sans-serif'],
+                mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+            },
+            fontSize: {
+                'body-sm': ['12px', { lineHeight: '20px' }],
+                'body-md': ['16px', { lineHeight: '24px' }],
+                'body-lg': ['20px', { lineHeight: '32px' }],
+                'h3': ['40px', { lineHeight: '48px' }],
+                'h2': ['48px', { lineHeight: '56px' }],
+                'h1': ['56px', { lineHeight: '64px' }],
+            },
+            boxShadow: {
+                'card': '0 1px 3px 0 rgba(0,0,0,0.08), 0 1px 2px -1px rgba(0,0,0,0.06)',
+                'card-hover': '0 4px 12px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.08)',
+                'modal': '0 20px 60px rgba(0,0,0,0.25)',
+            },
+            borderRadius: {
+                'sm': '4px',
+                'md': '6px',
+                'lg': '8px',
+                'xl': '12px',
+                '2xl': '16px',
+                '3xl': '24px',
+            },
+            animation: {
+                'spin-slow': 'spin 2s linear infinite',
+                'pulse-soft': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'slide-in-right': 'slideInRight 0.3s ease-out',
+                'slide-in-up': 'slideInUp 0.3s ease-out',
+                'fade-in': 'fadeIn 0.2s ease-out',
+            },
+            transitionTimingFunction: {
+                'elegant': 'cubic-bezier(0.16, 1, 0.3, 1)',
+                'natural': 'cubic-bezier(0.25, 0.74, 0.22, 0.99)',
+                'cinematic': 'cubic-bezier(0.55, 0, 0.1, 1)',
+                'dramatic': 'cubic-bezier(0.7, 0, 0.3, 1)',
+                'snappy': 'cubic-bezier(0.7, 0, 0.4, 1)',
+            },
+            transitionDuration: {
+                '400': '400ms',
+                '600': '600ms',
+                '800': '800ms',
+                '1200': '1200ms',
+                '1600': '1600ms',
+            },
+            keyframes: {
+                slideInRight: {
+                    '0%': { transform: 'translateX(100%)', opacity: '0' },
+                    '100%': { transform: 'translateX(0)', opacity: '1' },
+                },
+                slideInUp: {
+                    '0%': { transform: 'translateY(16px)', opacity: '0' },
+                    '100%': { transform: 'translateY(0)', opacity: '1' },
+                },
+                fadeIn: {
+                    '0%': { opacity: '0' },
+                    '100%': { opacity: '1' },
+                },
+            },
+        },
+    },
+    plugins: [
+        function ({ addVariant }) {
+            addVariant('light', ['.light &', '[data-theme="light"] &']);
+        }
+    ],
+}
