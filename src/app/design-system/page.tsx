@@ -17,7 +17,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Radio, RadioGroup } from "@/components/ui/radio";
 import { Toggle } from "@/components/ui/toggle";
 import { Select } from "@/components/ui/select";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Cards } from "@/components/ui";
 import { Avatar, AvatarGroup } from "@/components/ui/avatar";
 import { Spinner } from "@/components/ui/spinner";
 import { Skeleton, SkeletonCard } from "@/components/ui/skeleton";
@@ -77,19 +77,27 @@ function Prop({ k, v }: { k: string; v: string }) {
 }
 
 /* ─────────────── Table demo data ─────────────── */
-const tableData = [
-    { make: "Toyota", model: "Camry", year: 2023, vin: "1HGBH41JXMN109186", status: "active" },
-    { make: "Ford", model: "F-150", year: 2022, vin: "1FTFW1E85MKD93472", status: "active" },
-    { make: "Tesla", model: "Model 3", year: 2024, vin: "5YJ3E1EA8NF347821", status: "pending" },
-    { make: "Honda", model: "Accord", year: 2021, vin: "1HGCV1F34MA047261", status: "inactive" },
-    { make: "BMW", model: "3 Series", year: 2023, vin: "3MW5R1J51N8C85443", status: "active" },
+import { TableXIcon } from "@/components/ui/table";
+
+const comparisonData = [
+    { category: "Core Vehicle ID", basic: "Make, Model, Year, Trim, Body Type", premium: "Everything in Basic" },
+    { category: "Engine & Drivetrain", basic: "Engine, Transmission, Fuel Type, Drive Type", premium: "Full powertrain specs" },
+    { category: "Technical Specs", basic: "Basic dimensions", premium: "Complete specs, weights, suspension, interiors" },
+    { category: "Pricing Data", basic: null, premium: "MSRP, invoice, total price" },
+    { category: "Fuel & Efficiency", basic: null, premium: "City / Highway / Combined, Green scores" },
+    { category: "EV / Hybrid Data", basic: null, premium: "Battery, range, powertrain" },
+    { category: "Safety Ratings", basic: null, premium: "NHTSA & IIHS" },
+    { category: "Options & Packages", basic: null, premium: "OEM options, packages, colors" },
+    { category: "Warranty Info", basic: null, premium: "Manufacturer coverage" },
+    { category: "Regions", basic: "US, Canada", premium: "US, Canada, Europe" },
+    { category: "VIN Coverage", basic: "1980–Present", premium: "1980–Present" },
 ];
 
-const STATUS_CLASSES: Record<string, string> = {
-    active: "bg-green-500/10 text-green-400 border-green-500/25",
-    pending: "bg-orange-500/10 text-orange-400 border-orange-500/25",
-    inactive: "bg-neutral-700 text-neutral-400 border-neutral-600",
-};
+const comparisonColumns = [
+    { key: "category", label: "" },
+    { key: "basic", label: "Basic VIN Decode API", render: (row: any) => row.basic ?? <TableXIcon /> },
+    { key: "premium", label: "Premium VIN Decode API", render: (row: any) => row.premium ?? <TableXIcon /> },
+];
 
 const apiSampleCode = `{
     "status": "success",
@@ -101,7 +109,7 @@ const apiSampleCode = `{
         "trim": "SXT",
         "style": "4dr Sedan Automatic",
         "trim_and_style": "SXT 4dr Sedan Automatic",
-        "summary": "The 2006 Dodge Stratus SXT is a sedan that comes with a 2.4L I-4 150HP engine and a 4-speed automatic transmission with overdrive. It has standard features like air conditioning, 16" alloy wheels, cruise control, power mirrors, power windows, power locks, auto locking doors, remote keyless entry, and an AM/FM stereo with a single CD player and four speakers. Overall, the Stratus SXT offers a comfortable and convenient driving experience with its range of features.",
+        "summary": "The 2006 Dodge Stratus SXT is a sedan that comes with a 2.4L I-4 150HP engine and a 4-speed automatic transmission with overdrive. It has standard features like air conditioning, 16\\" alloy wheels, cruise control, power mirrors, power windows, power locks, auto locking doors, remote keyless entry, and an AM/FM stereo with a single CD player and four speakers. Overall, the Stratus SXT offers a comfortable and convenient driving experience with its range of features.",
         "price": {
             "base_msrp": "20,825",
             "delivery_charges": "675",
@@ -120,74 +128,20 @@ const apiSampleCode = `{
                 "exterior": [
                     {
                         "overall_length": [
-                            {
-                                "value": "4,856",
-                                "unit": "mm"
-                            },
-                            {
-                                "value": "191.18",
-                                "unit": "in"
-                            }
-                        ]
-                    },
-                    {
-                        "overall_length_without_rear_bumper": [
-                            {
-                                "value": "",
-                                "unit": "in"
-                            },
-                            {
-                                "value": "",
-                                "unit": "mm"
-                            }
-                        ]
-                    },
-                    {
-                        "overall_length_with_rear_bumper": [
-                            {
-                                "value": "",
-                                "unit": "in"
-                            },
-                            {
-                                "value": "",
-                                "unit": "mm"
-                            }
+                            { "value": "4,856", "unit": "mm" },
+                            { "value": "191.18", "unit": "in" }
                         ]
                     },
                     {
                         "overall_width": [
-                            {
-                                "value": "1,793",
-                                "unit": "mm"
-                            },
-                            {
-                                "value": "70.59",
-                                "unit": "in"
-                            }
-                        ]
-                    },
-                    {
-                        "max_width_without_mirrors": [
-                            {
-                                "value": "70.6",
-                                "unit": "in"
-                            },
-                            {
-                                "value": "1,793.24",
-                                "unit": "mm"
-                            }
+                            { "value": "1,793", "unit": "mm" },
+                            { "value": "70.59", "unit": "in" }
                         ]
                     },
                     {
                         "overall_height": [
-                            {
-                                "value": "1,394",
-                                "unit": "mm"
-                            },
-                            {
-                                "value": "54.88",
-                                "unit": "in"
-                            }
+                            { "value": "1,394", "unit": "mm" },
+                            { "value": "54.88", "unit": "in" }
                         ]
                     }
                 ]
@@ -490,176 +444,137 @@ export default function DesignSystemPage() {
                     </Section>
 
                     {/* ── 6. Cards ── */}
-                    <Section id="cards" title="Cards" description="Container components with multiple visual variants and interactive states.">
-                        <Row label="Card Variants" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {(["default", "elevated", "glass", "bordered", "brand", "dark"] as const).map((v) => (
-                                <Card key={v} variant={v} hoverable>
-                                    <CardHeader>
-                                        <div className="w-9 h-9 rounded-lg bg-brand-primary/15 border border-brand-primary/25 flex items-center justify-center text-brand-primary mb-3">
-                                            <Car className="h-4 w-4" />
-                                        </div>
-                                        <CardTitle>VIN Decode</CardTitle>
-                                        <CardDescription>Decode any VIN to full vehicle specifications in milliseconds.</CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <Badge variant="neutral" size="sm">{v}</Badge>
-                                    </CardContent>
-                                </Card>
-                            ))}
+                    <Section id="cards" title="Cards" description="Unified polymorphic component supporting 12 structural variants for global reusability.">
+                        <Row label="Structural Variants" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                            {/* 1. H3 and Body */}
+                            <Cards 
+                                variant="h3Body" 
+                                heading="Standard Overview"
+                                richText="Comprehensive vehicle data including specifications, history, and real-time market valuation."
+                            />
+
+                            {/* 2. Icon and Body (Inline) */}
+                            <Cards 
+                                variant="iconBodyInline" 
+                                icon="Zap"
+                                richText="<strong>Sub-50ms Latency</strong>. Optimized edge delivery across 30+ global points of presence."
+                            />
+
+                            {/* 3. Icon and Body (Normal) */}
+                            <Cards 
+                                variant="iconBodyNormal" 
+                                icon="Shield"
+                                richText="Enterprise-grade security with 256-bit encryption and SOC2 Type II compliance."
+                            />
+
+                            {/* 4. H3, Image and Body (Borderless) */}
+                            <Cards 
+                                variant="h3ImageBodyBorderless" 
+                                heading="Visual Specifications"
+                                image="/api/placeholder/400/225"
+                                richText="High-resolution OEM images and interactive 3D vehicle models for every trim level."
+                            />
+
+                            {/* 5. H3 and Body (Redirect) */}
+                            <Cards 
+                                variant="h3BodyRedirect" 
+                                heading="API Documentation"
+                                richText="Explore our comprehensive endpoint references, SDKs, and integration guides."
+                                link="/docs"
+                            />
+
+                            {/* 6. Icon, H3, Body and CTA */}
+                            <Cards 
+                                variant="iconH3BodyCTA" 
+                                icon="Code2"
+                                heading="Developer Sandbox"
+                                richText="Test our full API suite in a safe environment without affecting your production quota."
+                                cta={{ label: "Open Sandbox", href: "#" }}
+                            />
+
+                            {/* 7. Icon, Body, Progress, Body */}
+                            <Cards 
+                                variant="iconBodyProgressBody" 
+                                icon="Activity"
+                                richText="Monthly API Quota Usage"
+                                progress={72}
+                                bottomText="You have reached <strong>72,000</strong> of 100,000 requests."
+                            />
+
+                            {/* 8. Logo, Body, Divider and Body */}
+                            <Cards 
+                                variant="logoBodyDividerBody" 
+                                logo="/api/placeholder/120/40"
+                                richText="The VDB API has transformed how we handle vehicle intake and appraisal."
+                                bottomText="<strong>Director of Engineering</strong>, Global Motors"
+                            />
+
+                            {/* 9. Body Only */}
+                            <Cards 
+                                variant="bodyOnly" 
+                                richText="Simple text-centric layout for micro-copy or secondary information within complex grids."
+                            />
                         </Row>
 
-                        <Row label="Complex Card Layouts" className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full mb-8">
-                            {/* 1. 2 columns card - Left side (Title, Body, CTA), Right side (Image placeholder) */}
-                            <Card className="p-0 overflow-hidden flex flex-col sm:flex-row col-span-1 lg:col-span-2">
-                                <div className="flex-1 p-6 flex flex-col justify-center items-start gap-4">
-                                    <div>
-                                        <CardTitle className="mb-2">Vehicle Specification Data</CardTitle>
-                                        <CardDescription>
-                                            Access over 150+ data points for any vehicle, including engine specifications, dimensions, equipment, and OEM pricing.
-                                        </CardDescription>
-                                    </div>
-                                    <Button>View Documentation</Button>
-                                </div>
-                                <div className="w-full sm:w-2/5 min-h-[200px] bg-neutral-800 flex items-center justify-center border-l border-neutral-700/50">
-                                    <ImageIcon className="h-8 w-8 text-neutral-600" />
-                                </div>
-                            </Card>
+                        <div className="space-y-12">
+                             {/* 10. H3, Body, Lists, Body, and CTA */}
+                             <Row label="Variant 10: Multi-Feature Layout">
+                                <Cards 
+                                    variant="h3BodyListsBodyCTA" 
+                                    heading="Core Platform Features"
+                                    richText="Everything you need to build powerful automotive software products."
+                                    listItems={[
+                                        { text: "17-character VIN Validation" },
+                                        { text: "WMI/VDS Decoding" },
+                                        { text: "Real-time Recalls & Safety" }
+                                    ]}
+                                    cta={{ label: "View All Features", href: "#" }}
+                                />
+                            </Row>
 
-                            {/* 2. video placeholder (16:9) */}
-                            <Card className="p-0 overflow-hidden col-span-1 flex flex-col">
-                                <div className="w-full aspect-video bg-neutral-800 flex items-center justify-center relative group cursor-pointer border-b border-neutral-700/50">
-                                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
-                                    <div className="h-14 w-14 rounded-full bg-brand-primary text-neutral-900 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                                        <Play className="h-6 w-6 ml-1 fill-current" />
-                                    </div>
-                                </div>
-                                <div className="flex-1 p-6 flex flex-col items-start gap-3">
-                                    <CardTitle>Getting Started Guide</CardTitle>
-                                    <Button variant="ghost" className="px-0 hover:bg-transparent h-auto py-0 text-brand-primary hover:text-brand-secondary">
-                                        <Play className="mr-2 h-4 w-4" /> View video
-                                    </Button>
-                                    <CardDescription>
-                                        Learn how to integrate the Vehicle Data API into your application in under 5 minutes.
-                                    </CardDescription>
-                                </div>
-                            </Card>
+                            {/* 11. Two-Column variant */}
+                            <Row label="Variant 11: Two-Column Feature">
+                                <Cards 
+                                    variant="twoColumnH3BodyListsBodyImage" 
+                                    heading="Enterprise Vehicle Intelligence"
+                                    richText="Our proprietary data lake processes millions of vehicle signals daily to provide the most accurate specification matrix in the industry."
+                                    listItems={[
+                                        { text: "Global OEM specification coverage" },
+                                        { text: "Interactive equipment filtering" },
+                                        { text: "Historical pricing and auction data" },
+                                        { text: "Recalls and technical bulletins" }
+                                    ]}
+                                    image="/api/placeholder/800/600"
+                                />
+                            </Row>
 
-                            {/* 4. 2 columns card - Left: Content, Right: 3 nested cards */}
-                            <Card className="p-6 flex flex-col lg:flex-row gap-8 col-span-1 lg:col-span-2">
-                                <div className="flex-1 flex flex-col justify-center items-start gap-4">
-                                    <CardTitle>Enterprise Architecture</CardTitle>
-                                    <CardDescription className="max-w-md">
-                                        Built for scale with distributed caching, automatic failover, and extreme reliability for your vehicle data needs.
-                                    </CardDescription>
-                                    <Button variant="secondary">Contact Sales</Button>
-                                </div>
-                                <div className="flex-1 grid grid-cols-2 gap-4">
-                                    <Card variant="bordered" className="p-4 flex flex-col gap-2 shadow-none border-[#404040]">
-                                        <Zap className="h-5 w-5 text-brand-primary" />
-                                        <h4 className="font-semibold text-sm text-neutral-200 mt-1">Millisecond Latency</h4>
-                                        <p className="text-xs text-neutral-400">Edge network delivery.</p>
-                                    </Card>
-                                    <Card variant="bordered" className="p-4 flex flex-col gap-2 shadow-none border-[#404040]">
-                                        <Shield className="h-5 w-5 text-green-400" />
-                                        <h4 className="font-semibold text-sm text-neutral-200 mt-1">Enterprise SLA</h4>
-                                        <p className="text-xs text-neutral-400">99.99% uptime guarantee.</p>
-                                    </Card>
-                                    <Card variant="bordered" className="p-4 col-span-2 flex flex-col gap-2 shadow-none border-[#404040]">
-                                        <Database className="h-5 w-5 text-blue-400" />
-                                        <h4 className="font-semibold text-sm text-neutral-200 mt-1">Massive Coverage</h4>
-                                        <p className="text-xs text-neutral-400">Over 500 million VINs indexed and decoded globally since 1980.</p>
-                                    </Card>
-                                </div>
-                            </Card>
+                            {/* 12. Technical variant */}
+                            <Row label="Variant 12: Technical Engineering Card">
+                                <Cards 
+                                    variant="technical" 
+                                    icon="Cpu"
+                                    heading="Batch Processing Engine"
+                                    subheading="REQUEST SAMPLE"
+                                    codeSnippet={JSON.stringify({
+                                        vins: ["1HGBH41JXMN109186", "1FTFW1E85MKD93472"],
+                                        format: "json",
+                                        include: ["specs", "recalls"]
+                                    }, null, 2)}
+                                    subheading2="RESPONSE SCHEMA"
+                                    tableData={[
+                                        { field: "vin", type: "string", description: "Validated 17-char VIN" },
+                                        { field: "status", type: "enum", description: "success | error" },
+                                        { field: "latency", type: "int", description: "ms" }
+                                    ]}
+                                    richText="Supports up to 500 VINs per request with asynchronous background processing."
+                                />
+                            </Row>
+                        </div>
+                    </Section>
 
-                            {/* 3. 2 columns ghost card */}
-                            <Card className="col-span-1 lg:col-span-2 flex flex-col sm:flex-row items-start sm:items-center gap-6 p-6 border border-neutral-800 bg-transparent shadow-none hover:bg-neutral-800/20">
-                                <div className="flex items-center gap-3 w-full sm:w-1/3">
-                                    <div className="w-10 h-10 rounded-lg bg-neutral-800 flex items-center justify-center shrink-0">
-                                        <Lock className="h-5 w-5 text-neutral-300" />
-                                    </div>
-                                    <CardTitle className="text-base">Secure Endpoints</CardTitle>
-                                </div>
-                                <div className="flex-1">
-                                    <CardDescription>
-                                        All API requests are secured via 256-bit TLS encryption, with API keys rotated seamlessly without downtime.
-                                    </CardDescription>
-                                </div>
-                            </Card>
-
-                            {/* 5. Icon and Title in one row, Body text under */}
-                            <Card className="col-span-1 p-6 flex flex-col gap-3 items-start">
-                                <div className="flex items-center gap-3">
-                                    <Activity className="h-5 w-5 text-purple-400" />
-                                    <CardTitle className="text-base">Real-time Webhooks</CardTitle>
-                                </div>
-                                <CardDescription>
-                                    Receive instant push notifications when a watched vehicle&apos;s status changes such as title updates or accident reports.
-                                </CardDescription>
-                            </Card>
-
-                            {/* 6. 2 cards combined as one with a divider line */}
-                            <Card className="col-span-1 lg:col-span-2 p-0 overflow-hidden divide-y divide-neutral-800">
-                                <div className="p-6 bg-neutral-800/20">
-                                    <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-neutral-300">
-                                        <li className="flex items-center gap-2"><Check className="h-4 w-4 text-green-400" /> 17-character VIN Validation</li>
-                                        <li className="flex items-center gap-2"><Check className="h-4 w-4 text-green-400" /> WMI Decoding (Manufacturer)</li>
-                                        <li className="flex items-center gap-2"><Check className="h-4 w-4 text-green-400" /> Check Digit Calculation</li>
-                                        <li className="flex items-center gap-2"><Check className="h-4 w-4 text-green-400" /> VDS Decoding (Vehicle Attributes)</li>
-                                    </ul>
-                                </div>
-                                <div className="p-6 flex flex-col gap-2">
-                                    <CardTitle>Core VIN Structure</CardTitle>
-                                    <CardDescription>
-                                        The standard 17-character Vehicle Identification Number protocol provides universal identification properties prior to complete specification lookups.
-                                    </CardDescription>
-                                </div>
-                            </Card>
-
-                            {/* 7. Card with code block */}
-                            <Card className="col-span-1 lg:col-span-2 p-6 flex flex-col gap-4 items-start">
-                                <div className="flex flex-col gap-2">
-                                    <CardTitle>Batch Processing</CardTitle>
-                                    <CardDescription>
-                                        Submit up to 500 VINs per request for asynchronous bulk decoding.
-                                    </CardDescription>
-                                </div>
-                                <div className="w-full">
-                                    <CodeBlock
-                                        code={`curl -X POST https://api.vdb.io/v1/vin/batch \\
-  -H "Authorization: Bearer sk-live..." \\
-  -d '{"vins": ["1HGB...", "5YJ3..."]}'`}
-                                        language="bash"
-                                        copyable={true}
-                                    />
-                                </div>
-                            </Card>
-
-                            {/* 8. Cards with lists (2 columns) */}
-                            <Card className="col-span-1 p-6 flex flex-col gap-4">
-                                <CardTitle>Supported Geographies</CardTitle>
-                                <ul className="grid grid-cols-2 gap-y-2 gap-x-4 text-sm text-neutral-400">
-                                    <li className="flex items-center gap-1.5"><Globe className="h-3 w-3" /> United States</li>
-                                    <li className="flex items-center gap-1.5"><Globe className="h-3 w-3" /> Canada</li>
-                                    <li className="flex items-center gap-1.5"><Globe className="h-3 w-3" /> Mexico</li>
-                                    <li className="flex items-center gap-1.5"><Globe className="h-3 w-3" /> Eur. Union</li>
-                                    <li className="flex items-center gap-1.5"><Globe className="h-3 w-3" /> UK</li>
-                                    <li className="flex items-center gap-1.5"><Globe className="h-3 w-3" /> Japan</li>
-                                </ul>
-                            </Card>
-
-                            {/* 9. Title, Body Text, CTA */}
-                            <Card className="col-span-1 p-6 flex flex-col items-start gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <CardTitle>API Documentation</CardTitle>
-                                    <CardDescription>
-                                        Comprehensive guides, SDKs, and endpoint references to get you integrated faster.
-                                    </CardDescription>
-                                </div>
-                                <Button variant="outline" rightIcon={<ArrowRight className="h-4 w-4" />}>Read the Docs</Button>
-                            </Card>
-                        </Row>
-                        <Row label="Avatar">
+                    {/* ── Avatars ── */}
+                    <Section id="avatars" title="Avatars" description="User profile indicators and groups.">
+                        <Row label="Avatar Variants">
                             <Avatar size="xs" initials="A" />
                             <Avatar size="sm" initials="JD" />
                             <Avatar size="md" initials="RS" status="online" />
@@ -788,256 +703,7 @@ export default function DesignSystemPage() {
                         </Row>
 
                         <Row label="Comparison Table">
-                            <div className="w-full overflow-x-auto pb-4">
-                                <div className="flex flex-col items-start relative min-w-[800px] border border-[#6f6f6f] rounded-[24px] overflow-hidden bg-[#171717]">
-                                    {/* Header */}
-                                    <div className="border-b border-[#6f6f6f] flex items-center relative w-full bg-[#171717]">
-                                        <div className="h-full shrink-0 w-[320px]" />
-                                        <div className="flex flex-[1_0_0] items-start px-4 py-4 relative">
-                                            <p className="flex-[1_0_0] font-semibold text-[18px] text-[rgba(255,255,255,0.59)]">
-                                                Basic VIN Decode API
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-[1_0_0] items-start px-4 py-4 relative">
-                                            <p className="flex-[1_0_0] font-semibold text-[18px] text-[rgba(255,255,255,0.59)]">
-                                                Premium VIN Decode API
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    {/* Row 1 */}
-                                    <div className="border-b border-[#6f6f6f] flex items-center relative w-full">
-                                        <div className="flex items-start px-4 py-4 relative shrink-0 w-[320px]">
-                                            <p className="flex-[1_0_0] font-semibold text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                Core Vehicle ID
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-[1_0_0] items-start relative">
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    Make, Model, Year, Trim, Body Type
-                                                </p>
-                                            </div>
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    Everything in Basic
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Row 2 */}
-                                    <div className="border-b border-[#6f6f6f] flex items-center relative w-full bg-[#171717]">
-                                        <div className="flex items-start px-4 py-4 relative shrink-0 w-[320px]">
-                                            <p className="flex-[1_0_0] font-semibold text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                Engine & Drivetrain
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-[1_0_0] items-start relative">
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    Engine, Transmission, Fuel Type, Drive Type
-                                                </p>
-                                            </div>
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    Full powertrain specs
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Row 3 */}
-                                    <div className="border-b border-[#6f6f6f] flex items-center relative w-full">
-                                        <div className="flex items-start px-4 py-4 relative shrink-0 w-[320px]">
-                                            <p className="flex-[1_0_0] font-semibold text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                Technical Specs
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-[1_0_0] items-start relative">
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    Basic dimensions
-                                                </p>
-                                            </div>
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    Complete specs, weights, suspension, interiors
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Row 4 */}
-                                    <div className="border-b border-[#6f6f6f] flex items-center relative w-full bg-[#171717]">
-                                        <div className="flex items-start px-4 py-4 relative shrink-0 w-[320px]">
-                                            <p className="flex-[1_0_0] font-semibold text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                Pricing Data
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-[1_0_0] items-start relative">
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <div className="relative shrink-0 w-6 h-6 flex items-center justify-center bg-red-500/10 rounded overflow-hidden">
-                                                    <div className="w-[1px] h-[75%] bg-red-400 rotate-45" /> {/* Close/Cross icon equivalent */}
-                                                </div>
-                                            </div>
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    MSRP, invoice, total price
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Row 5 */}
-                                    <div className="border-b border-[#6f6f6f] flex items-center relative w-full">
-                                        <div className="flex items-start px-4 py-4 relative shrink-0 w-[320px]">
-                                            <p className="flex-[1_0_0] font-semibold text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                Fuel & Efficiency
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-[1_0_0] items-start relative">
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <div className="relative shrink-0 w-6 h-6 flex items-center justify-center bg-red-500/10 rounded overflow-hidden">
-                                                    <div className="w-[1px] h-[75%] bg-red-400 rotate-45" />
-                                                </div>
-                                            </div>
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    City / Highway / Combined, Green scores
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Row 6 */}
-                                    <div className="border-b border-[#6f6f6f] flex items-center relative w-full bg-[#171717]">
-                                        <div className="flex items-start px-4 py-4 relative shrink-0 w-[320px]">
-                                            <p className="flex-[1_0_0] font-semibold text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                EV / Hybrid Data
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-[1_0_0] items-start relative">
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <div className="relative shrink-0 w-6 h-6 flex items-center justify-center bg-red-500/10 rounded overflow-hidden">
-                                                    <div className="w-[1px] h-[75%] bg-red-400 rotate-45" />
-                                                </div>
-                                            </div>
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    Battery, range, powertrain
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Row 7 */}
-                                    <div className="border-b border-[#6f6f6f] flex items-center relative w-full">
-                                        <div className="flex items-start px-4 py-4 relative shrink-0 w-[320px]">
-                                            <p className="flex-[1_0_0] font-semibold text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                Safety Ratings
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-[1_0_0] items-start relative">
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <div className="relative shrink-0 w-6 h-6 flex items-center justify-center bg-red-500/10 rounded overflow-hidden">
-                                                    <div className="w-[1px] h-[75%] bg-red-400 rotate-45" />
-                                                </div>
-                                            </div>
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    NHTSA & IIHS
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Row 8 */}
-                                    <div className="border-b border-[#6f6f6f] flex items-center relative w-full bg-[#171717]">
-                                        <div className="flex items-start px-4 py-4 relative shrink-0 w-[320px]">
-                                            <p className="flex-[1_0_0] font-semibold text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                Options & Packages
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-[1_0_0] items-start relative">
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <div className="relative shrink-0 w-6 h-6 flex items-center justify-center bg-red-500/10 rounded overflow-hidden">
-                                                    <div className="w-[1px] h-[75%] bg-red-400 rotate-45" />
-                                                </div>
-                                            </div>
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    OEM options, packages, colors
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Row 9 */}
-                                    <div className="border-b border-[#6f6f6f] flex items-center relative w-full">
-                                        <div className="flex items-start px-4 py-4 relative shrink-0 w-[320px]">
-                                            <p className="flex-[1_0_0] font-semibold text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                Warranty Info
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-[1_0_0] items-start relative">
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <div className="relative shrink-0 w-6 h-6 flex items-center justify-center bg-red-500/10 rounded overflow-hidden">
-                                                    <div className="w-[1px] h-[75%] bg-red-400 rotate-45" />
-                                                </div>
-                                            </div>
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    Manufacturer coverage
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Row 10 */}
-                                    <div className="border-b border-[#6f6f6f] flex items-center relative w-full bg-[#171717]">
-                                        <div className="flex items-start px-4 py-4 relative shrink-0 w-[320px]">
-                                            <p className="flex-[1_0_0] font-semibold text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                Regions
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-[1_0_0] items-start relative">
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    US, Canada
-                                                </p>
-                                            </div>
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    US, Canada, Europe
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Row 11 */}
-                                    <div className="flex items-center relative w-full">
-                                        <div className="flex items-start px-4 py-4 relative shrink-0 w-[320px]">
-                                            <p className="flex-[1_0_0] font-semibold text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                VIN Coverage
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-[1_0_0] items-start relative">
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    1980–Present
-                                                </p>
-                                            </div>
-                                            <div className="flex flex-[1_0_0] items-center px-4 py-4 relative">
-                                                <p className="flex-[1_0_0] font-normal text-[18px] text-[rgba(255,255,255,0.92)]">
-                                                    1980–Present
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
+                            <Table data={comparisonData} columns={comparisonColumns} />
                         </Row>
 
                         <Row label="Code Block — API Response">

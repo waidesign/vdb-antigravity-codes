@@ -24,8 +24,8 @@ export { Select } from "./select";
 export type { SelectProps, SelectOption } from "./select";
 
 // Display
-export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./card";
-export type { CardProps } from "./card";
+export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Cards } from "./cards";
+export type { CardProps, CardsProps, CardVariant } from "./cards";
 
 export { Avatar, AvatarGroup } from "./avatar";
 export type { AvatarProps } from "./avatar";

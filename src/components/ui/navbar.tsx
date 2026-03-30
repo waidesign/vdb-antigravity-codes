@@ -19,7 +19,7 @@ interface NavbarProps {
 }
 
 const defaultItems: NavItem[] = [
-    { label: "Components", href: "/test-section" },
+    { label: "Components", href: "/components" },
     { label: "Documentation", href: "#" },
     { label: "API Reference", href: "#" },
     { label: "Pricing", href: "#" },

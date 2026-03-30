@@ -8,7 +8,7 @@ import { ChevronDown, CloudDownload, Menu, X } from "lucide-react";
 const navLinks = [
     { label: "API Services", href: "#", hasDropdown: true },
     { label: "Industries", href: "#", hasDropdown: true },
-    { label: "Components", href: "/test-section" },
+    { label: "Components", href: "/components" },
     { label: "Docs", href: "#" },
     { label: "Book a Meeting", href: "/schedule-a-demo" },
     { label: "Blog", href: "/blog" },

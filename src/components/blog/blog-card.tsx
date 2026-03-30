@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, Clock, Calendar } from "lucide-react";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/cards";
 import { Badge } from "@/components/ui/badge";
 import { Post } from "@/lib/blog";
 
