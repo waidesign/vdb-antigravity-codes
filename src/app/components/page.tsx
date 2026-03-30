@@ -375,6 +375,7 @@ export default function ComponentsPage() {
                     { icon: "support", text: "24/7 Support" },
                 ]}
                 form={{
+                    title: "Get in touch with our team",
                     recaptchaEnabled: true,
                     submitLabel: "Submit",
                     fields: [
