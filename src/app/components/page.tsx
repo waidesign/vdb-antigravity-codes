@@ -1,11 +1,21 @@
 import { HeroSection } from "@/components/home/hero-section";
 import { Navbar } from "@/components/home/navbar";
 import { Footer } from "@/components/home/footer";
+import { ApiPageIntroSection } from "@/components/api-page-intro-section";
+import { AlternativeIntroSection } from "@/components/alternative-page-intro-section";
 
 export default function ComponentsPage() {
     return (
         <main className="min-h-screen w-full bg-[#0B0B0B]">
             <Navbar />
+            <div className="py-20 border-b border-white/5 pt-40">
+                <div className="max-w-7xl mx-auto px-6">
+                    <h2 className="text-3xl font-aileron font-bold text-white mb-2">Hero Section Component Variants</h2>
+                    <p className="text-neutral-400 mb-12 font-geist">
+                        Explore our range of multi-variant hero components, each designed for high performance and deep CMS integration.
+                    </p>
+                </div>
+            </div>
 
             {/* ── Service Page Hero — Light Theme ── */}
             <HeroSection
@@ -517,6 +527,281 @@ export default function ComponentsPage() {
                     ],
                 }}
             />
+
+            <div className="py-20 border-t border-white/5">
+                <div className="max-w-7xl mx-auto px-6">
+                    <h2 className="text-3xl font-aileron font-bold text-white mb-2">Intro Section Components</h2>
+                    <p className="text-neutral-400 mb-12 font-geist">Versatile, CMS-driven informational sections with split and centered layouts.</p>
+                </div>
+
+                {/* ── 1. Split Right (Feature/Code Style - The Reference Image) ── */}
+                <ApiPageIntroSection
+                    variant="api-split-media-right"
+                    subheading="Electric Vehicle Data"
+                    heading="Access Electric Vehicle Specifications Easily"
+                    headingHighlight="Specifications"
+                    richText="<p>The electric vehicle specifications API lets you quickly retrieve detailed information about any electric car. Just input the VIN, or year, make, model, and trim, and get comprehensive data within seconds.</p>"
+                    ctas={[
+                        { text: "Get started", href: "#", variant: "primary" }
+                    ]}
+                    media={{
+                        type: "featureCode",
+                        image: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", // A Tesla Charging image
+                        codeText: `{
+  "status": "success",
+  "data": {
+    "basis": {
+      "year": 2023,
+      "make": "Tesla",
+      "model": "Model Y",
+      "trim": "Performance 4dr All-wheel Drive Sport Utility",
+      "drive_type": "All wheel",
+      "transmission": "1-speed automatic"
+    },
+    "recommended_fuel": "electric vehicle (ev)"
+  }
+}`,
+                        alt: "Tesla Model Y"
+                    }}
+                />
+
+                {/* ── 2. Split Left (Video Variant) ── */}
+                <ApiPageIntroSection
+                    variant="api-split-media-left"
+                    theme="dark"
+                    spacingSize="standard"
+                    subheading="Integration"
+                    heading="Developer-First Vehicle Intelligence"
+                    headingHighlight="Intelligence"
+                    richText="<p>Our APIs are built by developers, for developers. With exhaustive documentation and ready-to-test endpoints, you can integrate world-class vehicle data into your application in less than 30 minutes.</p>"
+                    ctas={[
+                        { text: "View Docs", href: "#", variant: "outline" },
+                        { text: "Try Playground", href: "#", variant: "primary" }
+                    ]}
+                    media={{
+                        type: "video",
+                        videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", // placeholder video
+                        alt: "Code integration demo"
+                    }}
+                />
+
+                {/* ── 3. Simple Text Variant (New) ── */}
+                <ApiPageIntroSection
+                    variant="api-simple-text"
+                    theme="dark"
+                    spacingSize="standard"
+                    heading="What Is a Vehicle Specifications API?"
+                    richText="<p>The Vehicle Databases <strong>Vehicle Specifications API</strong> gives businesses and developers access to detailed vehicle specifications by <strong>VIN</strong> or <strong>Year, Make, Model, Trim</strong>. It returns structured technical data, including engine details, performance, dimensions, fuel economy, features, and pricing.</p>"
+                    secondaryRichText="<p>Built for speed and consistency, this <strong>vehicle data API</strong> is designed to power websites, applications, and internal systems with reliable vehicle specifications at scale.</p>"
+                    ctas={[
+                        { text: "Try it Free", href: "#", variant: "primary" }
+                    ]}
+                />
+
+                {/* ── 4. Feature List Split Variant (New) ── */}
+                <ApiPageIntroSection
+                    variant="api-feature-list-split"
+                    theme="dark"
+                    spacingSize="standard"
+                    heading="Accurate Title Checks By VIN"
+                    richText="<p>Our API returns the following information when called by Vehicle Identification Number (VIN):</p>"
+                    features={[
+                        { text: "Presence of a salvage record or not." },
+                        { text: "Date when it was reported as salvage." },
+                        { text: "Type of Title." },
+                        { text: "Fuel consumption." }
+                    ]}
+                    ctas={[
+                        { text: "Get started", href: "#", variant: "primary" },
+                        { text: "Read Docs", href: "#", variant: "outline" }
+                    ]}
+                    media={{
+                        type: "image",
+                        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop", // placeholder for dashboard
+                        alt: "Title Check Dashboard Mockup"
+                    }}
+                />
+
+                {/* ── 5. Heading on Top Variant (New) ── */}
+                <ApiPageIntroSection
+                    variant="api-heading-top-split"
+                    theme="dark"
+                    spacingSize="standard"
+                    heading="Get access to trade-in, private party and retail values for any vehicle"
+                    headingHighlight="retail values"
+                    richText="<p>Vehicle Databases API service allows you instant access to accurate vehicle market value information. Our market value pricing is based on the industry average for a particular vehicle.</p>"
+                    secondaryRichText="<p>We provide estimates of market value for used and new cars by VIN or make, year, model and trim based on market trends analysis.</p><p>Leveraging preeminent technologies we compute market value estimates down to state and city levels.</p>"
+                    ctas={[
+                        { text: "Get Started", href: "#", variant: "primary" }
+                    ]}
+                    media={{
+                        type: "video",
+                        videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // placeholder
+                        alt: "Market Value API Video"
+                    }}
+                />
+
+                {/* ── 6. Code Block Split Variant (New) ── */}
+                <ApiPageIntroSection
+                    variant="api-code-split"
+                    theme="dark"
+                    spacingSize="standard"
+                    heading="In-Depth Vehicle History Available in JSON/HTML Format"
+                    richText="<p>Our <strong>Vehicle history API</strong> offers in-depth information about a vehicle's past. Businesses can access historical records including title, ownership, service history & more via JSON or HTML format.</p><p>Want to customize the vehicle report? With our easy branding options add your business information & logo to the HTML reports.</p>"
+                    media={{
+                        type: "dashboard",
+                        codeText: JSON.stringify({
+                            status: "success",
+                            data: {
+                                vin: "5TQYK30D8FS503804",
+                                owner_history: [
+                                    {
+                                        owner: "Owner 1",
+                                        purchased: "2018",
+                                        state: "CA",
+                                        owned: "05/2018 - 03/2021",
+                                        duration: "2 year(s) 1 month"
+                                    },
+                                    {
+                                        owner: "Owner 2",
+                                        purchased: "2021",
+                                        state: "CA",
+                                        owned: "03/2021 - Present",
+                                        duration: "1 year(s) 4 month"
+                                    }
+                                ]
+                            }
+                        }, null, 2),
+                        alt: "Vehicle History API Dashboard"
+                    }}
+                />
+                <ApiPageIntroSection 
+                    variant="api-feature-grid-split" 
+                    theme="dark"
+                    heading="Extract Key Receipt Data Instantly"
+                    headingHighlight="Instantly"
+                    richText="<p>Our Receipt OCR API quickly converts scanned or photographed receipts into structured data with just one API call.</p><p>Save time, reduce data entry errors, and process thousands of receipts automatically.</p>"
+                    features={[
+                        { 
+                            text: "Works on", 
+                            description: "Thermal receipts, digital scans, mobile photos, and more." 
+                        },
+                        { 
+                            text: "Supports", 
+                            description: "JPG, PNG, PDF, and other image formats." 
+                        }
+                    ]}
+                    media={{
+                        type: "featureGrid",
+                        gridTitle: "Automatically extract the following:",
+                        gridItems: [
+                            { text: "Merchant Name" },
+                            { text: "Merchant Address" },
+                            { text: "Merchant Phone Number" },
+                            { text: "Merchant Website or URL" },
+                            { text: "Date of Purchase" },
+                            { text: "Time of Purchase" },
+                            { text: "Receipt Number / Invoice ID" },
+                            { text: "Payment Method" },
+                            { text: "Last 4 Digits of Card" },
+                            { text: "Tax Rate" },
+                            { text: "Tax Amount" },
+                            { text: "Subtotal" },
+                            { text: "Total Amount" },
+                            { text: "Currency Type" },
+                            { text: "Discounts" },
+                            { text: "Applied Coupons" },
+                        ]
+                    }}
+                />
+                <ApiPageIntroSection 
+                    variant="api-cards-grid" 
+                    theme="dark"
+                    heading="What is an Invoice OCR API?"
+                    richText="<p>An invoice OCR API is a tool that reads and extracts information from invoices. You can upload a scanned invoice, a photo, or a PDF, and the API will pull out key details like invoice numbers, dates, totals, and line items.</p><p>It returns clean, structured results in JSON format, making it easy to use the data in your accounting tools, finance software, or ERP systems.</p>"
+                    features={[
+                        { 
+                            stat: "88%", 
+                            text: "Reduce manual entry by 88%", 
+                            description: "Free your workforce from tedious tasks" 
+                        },
+                        { 
+                            stat: "30%", 
+                            text: "Decrease average error rate by 30%", 
+                            description: "Rely on AI you can trust" 
+                        },
+                        { 
+                            stat: "57%", 
+                            text: "Cut turnaround time by 57%", 
+                            description: "Accelerate your business operation" 
+                        }
+                    ]}
+                />
+
+                <div className="py-20 border-b border-white/5 pt-40">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <h2 className="text-3xl font-aileron font-bold text-white mb-2">Alternative Intro Section</h2>
+                        <p className="text-neutral-400 mb-12 font-geist">
+                            A clean, text-optimized introduction layout for marketing, documentation, and informational pages.
+                        </p>
+                    </div>
+                </div>
+
+                {/* ── Text Stack (Reference Style) ── */}
+                <AlternativeIntroSection 
+                    variant="text-stack-left"
+                    theme="dark"
+                    subheading="Documentation / APIs"
+                    heading="What Is the NHTSA VIN Decoder API?"
+                    headingHighlight="VIN Decoder API"
+                    richText="<p>The <strong>NHTSA VIN decoder API</strong> is a public vehicle data service provided by the U.S. government through the National Highway Safety Administration. It decodes VINs and returns basic details such as year, make, model, engine type, body class, and manufacturer information.</p><p>The API is primarily built for safety programs, recalls, and regulatory reporting, using manufacturer-submitted data for standard 17-character VINs.</p>"
+                />
+
+                <div className="py-20 border-b border-white/5 pt-40">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <h2 className="text-3xl font-aileron font-bold text-white mb-2">Mixed Content — Long Form</h2>
+                        <p className="text-neutral-400 mb-12 font-geist">
+                            A high-density documentation layout supporting multiple headings, logo grids, CTAs, and multi-column structured lists.
+                        </p>
+                    </div>
+                </div>
+
+                {/* ── Mixed Content Long (Reference Style) ── */}
+                <AlternativeIntroSection 
+                    variant="mixed-content-long"
+                    theme="dark"
+                    subheading="Introducing Both NMVTIS and Vehicle Databases"
+                    heading="NMVTIS"
+                    richText="<p>The National Motor Vehicle Title Information System (NMVTIS) is a federal database created under the Anti-Car Theft Act of 1992.</p><p>Operated by the American Association of Motor Vehicle Administrators (AAMVA), NMVTIS is a multi-dimensional tool aiming to prevent the sale of stolen vehicles, protect consumers from fraud, and ensure vehicle safety. This takes into account the 17-digit VIN (Vehicle Identification Number) which is decoded and examined for all records available on a car, a process termed VIN check.</p><p>It collates accurate and up-to-date information about a vehicle's title, brand, and other key data points, serving as the only nationwide database under federal law.</p>"
+                    sectionTwoHeading="Vehicle Databases: Your Gateway to Comprehensive Automotive Data"
+                    tertiaryRichText="<p>Vehicle Databases is a globally recognized and leading provider of vehicle data APIs. Vehicle Databases cover a wide spectrum of vehicle data needs, serving as a trusted solution for various businesses including Detailed Vehicle History (DVH), Smart Car Check (SCC), ShopSmartAutos, Vehicle History Europe (vhr.eu), CarTrackers, GoAutoVIN and more.</p>"
+                    logos={[
+                        { image: { url: "/images/instant-vin-reports.png", alt: "Instant VIN Reports" }, link: "https://google.com" },
+                        { image: { url: "/images/dvh-logo.png", alt: "DVH" }, link: "https://google.com" },
+                        { image: { url: "/images/consulta-vin.png", alt: "Consulta VIN" }, link: "https://google.com" },
+                        { image: { url: "/images/shopsmart-autos.png", alt: "ShopSmart Autos" }, link: "https://google.com" },
+                        { image: { url: "/images/cartrackers.png", alt: "CarTrackers" }, link: "https://google.com" },
+                        { image: { url: "/images/goautovin.png", alt: "GoAutoVIN" }, link: "https://google.com" }
+                    ]}
+                    quaternaryRichText="<p>Various businesses like car loan firms, insurance companies, fleet owners, auctioneers, and used car dealerships can integrate Vehicle Databases vehicle history API to access detailed vehicle history information on any used vehicles, and more than the information provided by Carfax, VINaudit, and Autocheck.</p>"
+                    ctas={[
+                        { text: "View a sample report powered by Vehicle Databases API", href: "#", variant: "primary" },
+                        { text: "Learn more", href: "#", variant: "outline" }
+                    ]}
+                    quinquenaryRichText="<p>These businesses can utilize the API on their websites to either gain insight or provide their customers with information and vehicle history data tailored to their specific needs. This helps to promote transparency and professionalism when buying, selling, auctioning, or insuring a used car.</p>"
+                    listHeading="Vehicle Databases' extensive API solutions include the following:"
+                    listStyle="numbers"
+                    listItems={[
+                        { text: "OCR API services" }, { text: "Auction history API" },
+                        { text: "VIN decoding API" }, { text: "Sales history API" },
+                        { text: "License Plate API" }, { text: "Classic VIN decoder API" },
+                        { text: "Vehicle Specification API" }, { text: "VIN title check API" },
+                        { text: "Vehicle market value API" }, { text: "Window sticker API" },
+                        { text: "Media API" }, { text: "Electric Vehicle Specifications API" },
+                        { text: "Vehicle service API" }
+                    ]}
+                />
+            </div>
 
             <Footer />
         </main>
