@@ -1,8 +1,7 @@
 import { HeroSection } from "@/components/home/hero-section";
 import { Navbar } from "@/components/home/navbar";
 import { Footer } from "@/components/home/footer";
-import { ApiPageIntroSection } from "@/components/api-page-intro-section";
-import { AlternativeIntroSection } from "@/components/alternative-page-intro-section";
+import { IntroSection } from "@/components/intro-section";
 
 export default function ComponentsPage() {
     return (
@@ -16,6 +15,9 @@ export default function ComponentsPage() {
                     </p>
                 </div>
             </div>
+
+            {/* ... (HeroSection instances omitted for brevity in thought, but I'll replace the whole file content or use chunks) ... */}
+            {/* Note: I'll use multi_replace_file_content if it's too large, but I can also just replace the bottom part. */}
 
             {/* ── Service Page Hero — Light Theme ── */}
             <HeroSection
@@ -535,8 +537,9 @@ export default function ComponentsPage() {
                 </div>
 
                 {/* ── 1. Split Right (Feature/Code Style - The Reference Image) ── */}
-                <ApiPageIntroSection
-                    variant="api-split-media-right"
+                {/* ── 1. Split Right (Feature/Code Style - The Reference Image) ── */}
+                <IntroSection
+                    variant="split-media-right"
                     subheading="Electric Vehicle Data"
                     heading="Access Electric Vehicle Specifications Easily"
                     headingHighlight="Specifications"
@@ -545,9 +548,9 @@ export default function ComponentsPage() {
                         { text: "Get started", href: "#", variant: "primary" }
                     ]}
                     media={{
-                        type: "featureCode",
+                        type: "code-snippet",
                         image: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&w=1000&auto=format&fit=crop", // A Tesla Charging image
-                        codeText: `{
+                        code: `{
   "status": "success",
   "data": {
     "basis": {
@@ -566,8 +569,8 @@ export default function ComponentsPage() {
                 />
 
                 {/* ── 2. Split Left (Video Variant) ── */}
-                <ApiPageIntroSection
-                    variant="api-split-media-left"
+                <IntroSection
+                    variant="split-media-left"
                     theme="dark"
                     spacingSize="standard"
                     subheading="Integration"
@@ -586,8 +589,8 @@ export default function ComponentsPage() {
                 />
 
                 {/* ── 3. Simple Text Variant (New) ── */}
-                <ApiPageIntroSection
-                    variant="api-simple-text"
+                <IntroSection
+                    variant="text-only"
                     theme="dark"
                     spacingSize="standard"
                     heading="What Is a Vehicle Specifications API?"
@@ -599,8 +602,8 @@ export default function ComponentsPage() {
                 />
 
                 {/* ── 4. Feature List Split Variant (New) ── */}
-                <ApiPageIntroSection
-                    variant="api-feature-list-split"
+                <IntroSection
+                    variant="split-media-right"
                     theme="dark"
                     spacingSize="standard"
                     heading="Accurate Title Checks By VIN"
@@ -623,8 +626,8 @@ export default function ComponentsPage() {
                 />
 
                 {/* ── 5. Heading on Top Variant (New) ── */}
-                <ApiPageIntroSection
-                    variant="api-heading-top-split"
+                <IntroSection
+                    variant="heading-top-split"
                     theme="dark"
                     spacingSize="standard"
                     heading="Get access to trade-in, private party and retail values for any vehicle"
@@ -642,15 +645,15 @@ export default function ComponentsPage() {
                 />
 
                 {/* ── 6. Code Block Split Variant (New) ── */}
-                <ApiPageIntroSection
-                    variant="api-code-split"
+                <IntroSection
+                    variant="split-media-right"
                     theme="dark"
                     spacingSize="standard"
                     heading="In-Depth Vehicle History Available in JSON/HTML Format"
                     richText="<p>Our <strong>Vehicle history API</strong> offers in-depth information about a vehicle's past. Businesses can access historical records including title, ownership, service history & more via JSON or HTML format.</p><p>Want to customize the vehicle report? With our easy branding options add your business information & logo to the HTML reports.</p>"
                     media={{
-                        type: "dashboard",
-                        codeText: JSON.stringify({
+                        type: "code-dashboard",
+                        code: JSON.stringify({
                             status: "success",
                             data: {
                                 vin: "5TQYK30D8FS503804",
@@ -675,8 +678,8 @@ export default function ComponentsPage() {
                         alt: "Vehicle History API Dashboard"
                     }}
                 />
-                <ApiPageIntroSection 
-                    variant="api-feature-grid-split" 
+                <IntroSection 
+                    variant="feature-grid-split" 
                     theme="dark"
                     heading="Extract Key Receipt Data Instantly"
                     headingHighlight="Instantly"
@@ -692,9 +695,9 @@ export default function ComponentsPage() {
                         }
                     ]}
                     media={{
-                        type: "featureGrid",
-                        gridTitle: "Automatically extract the following:",
-                        gridItems: [
+                        type: "feature-grid-card",
+                        title: "Automatically extract the following:",
+                        items: [
                             { text: "Merchant Name" },
                             { text: "Merchant Address" },
                             { text: "Merchant Phone Number" },
@@ -714,8 +717,8 @@ export default function ComponentsPage() {
                         ]
                     }}
                 />
-                <ApiPageIntroSection 
-                    variant="api-cards-grid" 
+                <IntroSection 
+                    variant="stat-cards" 
                     theme="dark"
                     heading="What is an Invoice OCR API?"
                     richText="<p>An invoice OCR API is a tool that reads and extracts information from invoices. You can upload a scanned invoice, a photo, or a PDF, and the API will pull out key details like invoice numbers, dates, totals, and line items.</p><p>It returns clean, structured results in JSON format, making it easy to use the data in your accounting tools, finance software, or ERP systems.</p>"
@@ -748,8 +751,9 @@ export default function ComponentsPage() {
                 </div>
 
                 {/* ── Text Stack (Reference Style) ── */}
-                <AlternativeIntroSection 
-                    variant="text-stack-left"
+                {/* ── Text Stack (Reference Style) ── */}
+                <IntroSection 
+                    variant="text-only"
                     theme="dark"
                     subheading="Documentation / APIs"
                     heading="What Is the NHTSA VIN Decoder API?"
@@ -767,8 +771,8 @@ export default function ComponentsPage() {
                 </div>
 
                 {/* ── Mixed Content Long (Reference Style) ── */}
-                <AlternativeIntroSection 
-                    variant="mixed-content-long"
+                <IntroSection 
+                    variant="mixed-content"
                     theme="dark"
                     subheading="Introducing Both NMVTIS and Vehicle Databases"
                     heading="NMVTIS"
