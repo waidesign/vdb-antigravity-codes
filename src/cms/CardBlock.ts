@@ -16,7 +16,7 @@ export const CardBlock: Block = {
         { label: 'H3 and Body', value: 'h3Body' },
         { label: 'Icon and Body (Inline)', value: 'iconBodyInline' },
         { label: 'Icon and Body (Normal)', value: 'iconBodyNormal' },
-        { label: 'H3, Image and Body (Borderless)', value: 'h3ImageBodyBorderless' },
+        { label: 'With Featured Image', value: 'WithFeaturedImage' },
         { label: 'H3 and Body (Redirect)', value: 'h3BodyRedirect' },
         { label: 'Icon, H3, Body and CTA', value: 'iconH3BodyCTA' },
         { label: 'Icon, Body, Progress, Body', value: 'iconBodyProgressBody' },
@@ -33,7 +33,7 @@ export const CardBlock: Block = {
       required: true,
       admin: {
         condition: (_: any, siblingData: any) =>
-          ['h3Body', 'h3ImageBodyBorderless', 'h3BodyRedirect', 'iconH3BodyCTA', 'h3BodyListsBodyCTA', 'twoColumnH3BodyListsBodyImage', 'technical'].includes(siblingData?.variant),
+          ['h3Body', 'WithFeaturedImage', 'h3BodyRedirect', 'iconH3BodyCTA', 'h3BodyListsBodyCTA', 'twoColumnH3BodyListsBodyImage', 'technical'].includes(siblingData?.variant),
       },
     },
     {
@@ -57,7 +57,7 @@ export const CardBlock: Block = {
       relationTo: 'media',
       admin: {
         condition: (_: any, siblingData: any) =>
-          ['h3ImageBodyBorderless', 'twoColumnH3BodyListsBodyImage', 'logoBodyDividerBody'].includes(siblingData?.variant),
+          ['WithFeaturedImage', 'twoColumnH3BodyListsBodyImage', 'logoBodyDividerBody'].includes(siblingData?.variant),
       },
     },
     {

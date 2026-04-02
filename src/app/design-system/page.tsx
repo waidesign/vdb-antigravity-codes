@@ -26,7 +26,7 @@ import { Progress, CircularProgress } from "@/components/ui/progress";
 import { Tabs } from "@/components/ui/tabs";
 import { Tag } from "@/components/ui/tag";
 import { Divider } from "@/components/ui/divider";
-import { Table } from "@/components/ui/table";
+// import { Table } from "@/components/ui/table";
 import { Modal } from "@/components/ui/modal";
 import { Drawer } from "@/components/ui/drawer";
 import { Navbar } from "@/components/ui/navbar";
@@ -77,7 +77,8 @@ function Prop({ k, v }: { k: string; v: string }) {
 }
 
 /* ─────────────── Table demo data ─────────────── */
-import { TableXIcon } from "@/components/ui/table";
+// import { TableXIcon } from "@/components/ui/table";
+const TableXIcon = () => <span>X</span>;
 
 const comparisonData = [
     { category: "Core Vehicle ID", basic: "Make, Model, Year, Trim, Body Type", premium: "Everything in Basic" },
@@ -469,7 +470,7 @@ export default function DesignSystemPage() {
 
                             {/* 4. H3, Image and Body (Borderless) */}
                             <Cards 
-                                variant="h3ImageBodyBorderless" 
+                                variant="WithFeaturedImage" 
                                 heading="Visual Specifications"
                                 image="/api/placeholder/400/225"
                                 richText="High-resolution OEM images and interactive 3D vehicle models for every trim level."
@@ -703,7 +704,8 @@ export default function DesignSystemPage() {
                         </Row>
 
                         <Row label="Comparison Table">
-                            <Table data={comparisonData} columns={comparisonColumns} />
+                            {/* <Table data={comparisonData} columns={comparisonColumns} /> */}
+                            <div className="text-neutral-500 text-sm">Table component omitted</div>
                         </Row>
 
                         <Row label="Code Block — API Response">

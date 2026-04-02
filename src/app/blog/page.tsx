@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Navbar } from "@/components/home/navbar";
-import { Footer } from "@/components/home/footer";
-import { BlogHero } from "@/components/blog/blog-hero";
-import { BlogCard } from "@/components/blog/blog-card";
-import { CategoryTabs } from "@/components/blog/category-tabs";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
+import { BlogHero } from "@/components/blog-hero";
+import { BlogCard } from "@/components/blog-card";
+import { CategoryTabs } from "@/components/category-tabs";
 import { posts } from "@/lib/blog";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 

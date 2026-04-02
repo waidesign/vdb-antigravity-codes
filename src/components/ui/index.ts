@@ -50,8 +50,8 @@ export type { TabItem } from "./tabs";
 export { Pagination } from "./pagination";
 
 // Data Display
-export { Table } from "./table";
-export type { Column } from "./table";
+export { FlexibleTable } from "./flexible-table";
+export type { Column } from "./flexible-table";
 export { StatCard } from "./stat-card";
 export { CodeBlock } from "./code-block";
 

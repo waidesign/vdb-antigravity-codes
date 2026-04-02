@@ -5,14 +5,14 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 // Sub-components
-import { HeadingRenderer } from "./intro/heading-renderer";
-import { CTAButtonGroup } from "./intro/cta-button-group";
-import { StatCardsGrid } from "./intro/stat-cards-grid";
-import { FeatureList } from "./intro/feature-list";
-import { FeatureCardList } from "./intro/feature-card-list";
-import { LogoGrid } from "./intro/logo-grid";
-import { NumberedBulletList } from "./intro/numbered-bullet-list";
-import { VisualContent, type IntroMedia } from "./intro/visual-content";
+import { HeadingRenderer } from "./heading-renderer";
+import { CTAButtonGroup } from "./cta-button-group";
+import { StatCardsGrid } from "./stat-cards-grid";
+import { FeatureList } from "./feature-list";
+import { FeatureCardList } from "./feature-card-list";
+import { LogoGrid } from "./logo-grid";
+import { NumberedBulletList } from "./numbered-bullet-list";
+import { VisualContent, type IntroMedia } from "./visual-content";
 
 export interface IntroSectionProps {
   variant:

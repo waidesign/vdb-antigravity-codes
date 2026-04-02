@@ -4,11 +4,11 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Calendar, Clock, Share2, Twitter, Linkedin, Link as LinkIcon } from "lucide-react";
-import { Navbar } from "@/components/home/navbar";
-import { Footer } from "@/components/home/footer";
-import { ArticleRenderer } from "@/components/blog/article-renderer";
-import { ArticleSidebar } from "@/components/blog/article-sidebar";
-import { BlogCard } from "@/components/blog/blog-card";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
+import { ArticleRenderer } from "@/components/article-renderer";
+import { ArticleSidebar } from "@/components/article-sidebar";
+import { BlogCard } from "@/components/blog-card";
 import { posts } from "@/lib/blog";
 import { Badge } from "@/components/ui/badge";
 

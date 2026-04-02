@@ -10,9 +10,9 @@ const buttonVariants = cva(
         variants: {
             variant: {
                 primary:
-                    "bg-gradient-to-r from-[#F59120] to-[#9747FF] text-white hover:opacity-90 shadow-[0_0_20px_rgba(245,145,32,0.25)] hover:shadow-[0_0_28px_rgba(245,145,32,0.4)]",
+                    "bg-gradient-to-r from-[#F59120] to-[#9747FF] text-white hover:opacity-90 shadow-[0_0_25px_rgba(245,145,32,0.3)] hover:shadow-[0_0_35px_rgba(245,145,32,0.5)]",
                 secondary:
-                    "bg-transparent border border-neutral-700 text-neutral-200 hover:border-neutral-400 hover:bg-neutral-800/60",
+                    "bg-transparent border border-white/20 text-white hover:border-white/90 hover:bg-white/10",
                 ghost:
                     "bg-transparent text-neutral-300 hover:bg-neutral-800/60 hover:text-neutral-100",
                 danger:
@@ -21,6 +21,10 @@ const buttonVariants = cva(
                     "bg-transparent border border-neutral-700 text-neutral-200 hover:border-neutral-400 hover:bg-neutral-800/60",
                 gradient:
                     "bg-gradient-to-r from-[#F59120] to-[#9747FF] text-white hover:opacity-90 shadow-[0_4px_15px_rgba(245,145,32,0.3)]",
+                orange:
+                    "bg-[#F59120] text-white hover:opacity-90 shadow-[0_4px_15px_rgba(245,145,32,0.2)]",
+                whatsapp:
+                    "bg-[#00A884] text-white hover:opacity-90 shadow-[0_4px_15px_rgba(0,168,132,0.15)]",
             },
             size: {
                 sm: "h-8 px-3 text-sm rounded-md",

@@ -1,7 +1,7 @@
 "use client";
 
-import { Navbar } from "@/components/home/navbar";
-import { Footer } from "@/components/home/footer";
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
 import Link from "next/link";
 import { MapPin, Phone, MessageSquare, ExternalLink } from "lucide-react";
 

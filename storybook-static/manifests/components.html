@@ -1,0 +1,4293 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Components Manifest</title>
+  <style>
+      :root {
+          --bg: #0b0c10;
+          --panel: #121318;
+          --muted: #9aa0a6;
+          --fg: #e8eaed;
+          --ok: #22c55e;
+          --info: #1e88e5;
+          --err: #c62828;
+          --ok-bg: #0c1a13;
+          --info-bg: #0c1624;
+          --err-bg: #1a0e0e;
+          --chip: #1f2330;
+          --border: #2b2f3a;
+          --link: #8ab4f8;
+          --active-ring: 1px; /* 1px active ring for pills and toggles */
+      }
+
+      * {
+          box-sizing: border-box;
+      }
+
+      html,
+      body {
+          margin: 0;
+          background: var(--bg);
+          color: var(--fg);
+          font: 14px/1.5 system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Ubuntu,
+          Cantarell,
+          'Helvetica Neue',
+          Arial,
+          'Noto Sans';
+      }
+
+      .wrap {
+          max-width: 1100px;
+          margin: 0 auto;
+          padding: 16px 20px;
+      }
+
+      header {
+          position: sticky;
+          top: 0;
+          backdrop-filter: blur(6px);
+          background: color-mix(in srgb, var(--bg) 84%, transparent);
+          border-bottom: 1px solid var(--border);
+          z-index: 10;
+      }
+
+      h1 {
+          font-size: 20px;
+          margin: 0 0 6px;
+      }
+
+      .summary {
+          display: flex;
+          gap: 12px;
+          flex-wrap: wrap;
+          align-items: center;
+      }
+
+      /* Top filter pills */
+      .filter-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          border: 1px solid var(--border);
+          border-radius: 999px;
+          background: var(--panel);
+          text-decoration: none;
+          cursor: pointer;
+          user-select: none;
+          color: var(--fg);
+      }
+
+      .filter-pill.ok {
+          color: #b9f6ca;
+          border-color: color-mix(in srgb, var(--ok) 55%, var(--border));
+          background: color-mix(in srgb, var(--ok) 18%, #000);
+      }
+
+      .filter-pill.info {
+          color: #b3d9ff;
+          border-color: color-mix(in srgb, var(--info) 55%, var(--border));
+          background: var(--info-bg);
+      }
+
+      .filter-pill.err {
+          color: #ff9aa0;
+          border-color: color-mix(in srgb, var(--err) 55%, var(--border));
+          background: var(--err-bg);
+      }
+
+      .filter-pill.all {
+          color: #d7dbe0;
+          border-color: var(--border);
+          background: var(--panel);
+      }
+
+      .filter-pill[aria-disabled='true'] {
+          cursor: default;
+          text-decoration: none;
+      }
+
+      .filter-pill:focus,
+      .filter-pill:active {
+          outline: none;
+          box-shadow: none;
+      }
+
+      /* Selected top pill ring via :target */
+      #filter-all:target ~ header .filter-pill[data-k='all'],
+      #filter-errors:target ~ header .filter-pill[data-k='errors'],
+      #filter-infos:target ~ header .filter-pill[data-k='infos'],
+      #filter-story-errors:target ~ header .filter-pill[data-k='story-errors'],
+      #filter-doc-errors:target ~ header .filter-pill[data-k='docs'],
+      #filter-docs:target ~ header .filter-pill[data-k='docs'] {
+          box-shadow: 0 0 0 var(--active-ring) currentColor;
+          border-color: currentColor;
+      }
+
+      /* Hidden targets for filtering */
+      #filter-all,
+      #filter-errors,
+      #filter-infos,
+      #filter-story-errors,
+      #filter-doc-errors,
+      #filter-docs {
+          display: none;
+      }
+
+      main {
+          padding: 36px 0 40px;
+      }
+
+      .grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 18px;
+      }
+
+      /* one card per row */
+
+      .card {
+          border: 1px solid var(--border);
+          background: var(--panel);
+          border-radius: 14px;
+          padding: 14px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+      }
+
+      .head {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+      }
+
+      .title {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+      }
+
+      .title h2 {
+          font-size: 16px;
+          margin: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+      }
+
+      .meta {
+          font-size: 12px;
+          color: var(--muted);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+      }
+
+      .kv {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+      }
+
+      .chip {
+          font-size: 12px;
+          padding: 4px 8px;
+          border-radius: 999px;
+          background: var(--chip);
+          border: 1px solid var(--border);
+      }
+
+      .hint {
+          color: var(--muted);
+          font-size: 12px;
+      }
+
+      .badges {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+      }
+
+      /* Per-card badges: labels become toggles when clickable */
+      .badge {
+          font-size: 12px;
+          padding: 3px 8px;
+          border-radius: 999px;
+          border: 1px solid var(--border);
+          background: var(--chip);
+          color: #d7dbe0;
+      }
+
+      .badge.ok {
+          color: #b9f6ca;
+          border-color: color-mix(in srgb, var(--ok) 55%, var(--border));
+      }
+
+      .badge.info {
+          color: #b3d9ff;
+          border-color: color-mix(in srgb, var(--info) 55%, var(--border));
+      }
+
+      .badge.err {
+          color: #ff9aa0;
+          border-color: color-mix(in srgb, var(--err) 55%, var(--border));
+      }
+
+      .as-toggle {
+          cursor: pointer;
+      }
+
+      /* 1px ring on active toggle */
+      .tg-err:checked + label.as-toggle,
+      .tg-info:checked + label.as-toggle,
+      .tg-stories:checked + label.as-toggle,
+      .tg-docs:checked + label.as-toggle,
+      .tg-content:checked + label.as-toggle,
+      .tg-props:checked + label.as-toggle {
+          box-shadow: 0 0 0 var(--active-ring) currentColor;
+          border-color: currentColor;
+      }
+
+      /* Panels: hidden by default, shown when respective toggle checked */
+      .panels {
+          display: grid;
+          gap: 10px;
+      }
+
+      .panel {
+          display: none;
+      }
+
+      .tg-err:checked ~ .panels .panel-err {
+          display: grid;
+      }
+
+      .tg-info:checked ~ .panels .panel-info {
+          display: grid;
+          gap: 8px;
+      }
+
+      .tg-stories:checked ~ .panels .panel-stories {
+          display: grid;
+          gap: 8px;
+      }
+
+      .tg-docs:checked ~ .panels .panel-docs {
+          display: grid;
+          gap: 8px;
+      }
+
+      .tg-content:checked ~ .panels .panel-content {
+          display: grid;
+          gap: 8px;
+      }
+
+      .tg-props:checked ~ .panels .panel-props {
+          display: grid;
+      }
+
+      /* Colored notes for prop type error + info */
+      .note {
+          padding: 12px;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+      }
+
+      .note.err {
+          border-color: color-mix(in srgb, var(--err) 55%, var(--border));
+          background: var(--err-bg);
+          color: #ffd1d4;
+      }
+
+      .note.info {
+          border-color: color-mix(in srgb, var(--info) 55%, var(--border));
+          background: var(--info-bg);
+          color: #d6e8ff;
+      }
+
+      .note.ok {
+          border-color: color-mix(in srgb, var(--ok) 55%, var(--border));
+          background: var(--ok-bg);
+          color: var(--fg);
+      }
+
+      .note-title {
+          font-weight: 600;
+          margin-bottom: 6px;
+      }
+
+      .note-body {
+          white-space: normal;
+      }
+
+      /* Story error cards */
+      .ex {
+          padding: 10px;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+          background: #0f131b;
+      }
+
+      .ex.err {
+          border-color: color-mix(in srgb, var(--err) 55%, var(--border));
+      }
+
+      .row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-wrap: wrap;
+      }
+
+      .status-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          display: inline-block;
+      }
+
+      .dot-ok {
+          background: var(--ok);
+      }
+
+      .dot-err {
+          background: var(--err);
+      }
+
+      .ex-name {
+          font-weight: 600;
+      }
+
+      /* Error groups (visible in errors filter) */
+      .error-groups {
+          display: none;
+          margin-bottom: 16px;
+      }
+
+      .group {
+          border: 1px solid var(--border);
+          background: var(--panel);
+          border-radius: 14px;
+          overflow: hidden;
+      }
+
+      .group + .group {
+          margin-top: 12px;
+      }
+
+      .group-header {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 12px 14px;
+          cursor: pointer;
+          border-bottom: 1px solid var(--border);
+      }
+
+      .group-header:hover {
+          background: #141722;
+      }
+
+      .group-title {
+          font-weight: 600;
+          flex: 1;
+      }
+
+      .group-count {
+          font-size: 12px;
+          color: var(--muted);
+      }
+
+      .group-cards {
+          display: none;
+          padding: 12px;
+      }
+
+      .group .card {
+          margin: 12px 0;
+      }
+
+      .group .card:first-child {
+          margin-top: 0;
+      }
+
+      .group .card:last-child {
+          margin-bottom: 0;
+      }
+
+      /* caret rotation */
+      .group-tg:checked + label .caret {
+          transform: rotate(90deg);
+      }
+
+      .caret {
+          transition: transform 0.15s ease;
+      }
+
+      /* toggle body */
+      .group-tg:checked ~ .group-cards {
+          display: block;
+      }
+
+      /* CSS-only filtering of cards via top pills */
+      #filter-errors:target ~ main .card:not(.has-error):not(.has-story-error) {
+          display: none;
+      }
+
+      #filter-infos:target ~ main .card:not(.has-info) {
+          display: none;
+      }
+
+      #filter-story-errors:target ~ main .card:not(.has-story-error) {
+          display: none;
+      }
+
+      #filter-doc-errors:target ~ main .card:not(.has-doc-error) {
+          display: none;
+      }
+
+      #filter-docs:target ~ main .card:has(> .tg-docs),
+      #filter-docs:target ~ main .card.is-doc {
+          display: block;
+      }
+
+      #filter-docs:target ~ main .card:not(:has(> .tg-docs)):not(.is-doc) {
+          display: none;
+      }
+
+      #filter-all:target ~ main .card {
+          display: block;
+      }
+
+      /* In errors view, hide standalone component-error cards in the regular grid (they will appear in groups) */
+      #filter-errors:target ~ main .grid .card.has-error {
+          display: none;
+      }
+
+      /* Show grouped section only in errors view */
+      #filter-errors:target ~ main .error-groups {
+          display: block;
+      }
+
+      /* Section titles */
+      .section-title {
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--muted);
+          margin: 24px 0 12px;
+          padding-bottom: 8px;
+          border-bottom: 1px solid var(--border);
+      }
+      .section-title:first-child {
+          margin-top: 0;
+      }
+
+      /* When a toggle is checked, show the corresponding panel */
+      .card > .tg-err:checked ~ .panels .panel-err {
+          display: grid;
+      }
+      
+      .card > .tg-info:checked ~ .panels .panel-info {
+          display: grid;
+      }
+      
+      .card > .tg-stories:checked ~ .panels .panel-stories {
+          display: grid;
+      }
+
+      .card > .tg-docs:checked ~ .panels .panel-docs {
+          display: grid;
+      }
+
+      .card > .tg-content:checked ~ .panels .panel-content {
+          display: grid;
+      }
+
+      /* Add vertical spacing around panels only when any panel is visible */
+      .card > .tg-err:checked ~ .panels,
+      .card > .tg-info:checked ~ .panels,
+      .card > .tg-stories:checked ~ .panels,
+      .card > .tg-docs:checked ~ .panels,
+      .card > .tg-content:checked ~ .panels,
+      .card > .tg-props:checked ~ .panels {
+          margin: 10px 0;
+      }
+
+      /* Optional: a subtle 1px ring on the active badge, using :has() if available */
+      @supports selector(.card:has(.tg-err:checked)) {
+          .card:has(.tg-err:checked) label[for$='-err'],
+          .card:has(.tg-info:checked) label[for$='-info'],
+          .card:has(.tg-stories:checked) label[for$='-stories'],
+          .card:has(.tg-docs:checked) label[for$='-docs'],
+          .card:has(.tg-content:checked) label[for$='-content'],
+          .card:has(.tg-props:checked) label[for$='-props'] {
+              box-shadow: 0 0 0 1px currentColor;
+              border-color: currentColor;
+          }
+      }
+
+      /* Wrap long lines in code blocks at ~120 characters */
+      pre, code {
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+      pre {
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
+          word-break: break-word;
+          overflow-x: auto; /* fallback for extremely long tokens */
+          margin: 8px 0 0;
+      }
+      pre > code {
+          display: block;
+          white-space: inherit;
+          overflow-wrap: inherit;
+          word-break: inherit;
+          inline-size: min(100%, 120ch);
+      }
+
+      /* MDX content container for docs */
+      .mdx-content {
+          background: #0f131b;
+          border: 1px solid var(--border);
+          border-radius: 10px;
+          padding: 12px;
+          max-height: 400px;
+          overflow-y: auto;
+          margin-top: 8px;
+      }
+  </style>
+</head>
+<body>
+<!-- Hidden targets for the top-level filters -->
+<span id="filter-all"></span>
+<span id="filter-errors"></span>
+<span id="filter-infos"></span>
+<span id="filter-story-errors"></span>
+<span id="filter-doc-errors"></span>
+<span id="filter-docs"></span>
+<header>
+  <div class="wrap">
+    <h1>Manifest Debugger</h1>
+    <div class="summary"><a class="filter-pill all" data-k="all" href="#filter-all">All</a><span class="filter-pill ok" aria-disabled="true">20 components ok</span><a class="filter-pill info" data-k="infos" href="#filter-infos">19/20 infos</a><span class="filter-pill ok" aria-disabled="true">84 stories ok</span><a class="filter-pill ok" data-k="docs" href="#filter-docs">1 doc ok</a></div>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <div class="note info" style="margin-bottom: 16px;">
+            <strong>Tip:</strong> You are using <code>react-docgen</code> (the default). Generation took <strong>1.0s</strong>. For higher quality prop types, consider switching to <code>react-docgen-typescript</code> in your <code>main.ts</code>:
+            <pre><code>typescript: {
+  reactDocgen: 'react-docgen-typescript',
+}</code></pre>
+            Note: <code>react-docgen-typescript</code> can be slower. If performance is acceptable for your project, it generally produces better results.
+            <a href="https://storybook.js.org/docs/api/main-config/main-config-typescript#reactdocgen" target="_blank">Learn more</a>
+          </div>
+    <h2 class="section-title">Components</h2>
+    <div class="grid" role="list">
+      
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Accordions">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Accordions</h2>
+      <div class="badges">
+        
+        <label for="c-0-home-sections-accordions-info" class="badge info as-toggle">1 info</label>
+        <label for="c-0-home-sections-accordions-stories" class="badge ok as-toggle">3 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/home/accordions.stories.tsx">home-sections-accordions · ./src/components/home/accordions.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-0-home-sections-accordions-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-0-home-sections-accordions-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Accordions } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Developer Experience</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const DeveloperExperience = () =&gt; &lt;Accordions
+    variant=&quot;docAccordion&quot;
+    subheading=&quot;Simple Documentation -&quot;
+    heading=&quot;A Better Developer Experience&quot;
+    description=&quot;Our easy and straightforward documentation provides a stellar experience to developers making API integration smoother than ever.&quot;
+    languages={[&quot;Node&quot;, &quot;React&quot;, &quot;PHP&quot;, &quot;Python&quot;]}
+    items={[
+        {
+            id: &quot;market-value&quot;,
+            title: &quot;Vehicle Market Value API&quot;,
+            description: &quot;Vehicle market value API works as an Edmunds API alternative, allows you to get instant access to any vehicle&#39;s accurate market value pricing. We compute used and new car values by analyzing millions of actual sales transactions and auction prices.&quot;,
+            link: { label: &quot;Learn more&quot;, href: &quot;#&quot; },
+            snippets: {
+                Node: `var request = require(&#39;request&#39;);
+
+var options = {
+&#39;method&#39;: &#39;GET&#39;,
+&#39;url&#39;: &#39;https://api.vehicledatabases.com/market-value/v2/{vin}&#39;,
+&#39;headers&#39;: {
+&#39;x-AuthKey&#39;: &#39;{X-Authkey}&#39;
+}
+};
+
+request(options, function (error, response) {
+if (error) throw new Error(error);
+console.log(response.body);
+});`,
+                React: `import { useEffect, useState } from &#39;react&#39;;
+
+export function MarketValue({ vin }) {
+const [data, setData] = useState(null);
+
+useEffect(() =&gt; {
+fetch(\`https://api.vehicledatabases.com/market-value/v2/\${vin}\`, {
+  headers: { &#39;x-AuthKey&#39;: &#39;{X-Authkey}&#39; }
+})
+  .then(res =&gt; res.json())
+  .then(setData);
+}, [vin]);
+
+return &lt;pre&gt;{JSON.stringify(data, null, 2)}&lt;/pre&gt;;
+}`,
+                PHP: `&lt;?php
+
+$curl = curl_init();
+
+curl_setopt_array($curl, [
+CURLOPT_URL =&gt; &quot;https://api.vehicledatabases.com/market-value/v2/{vin}&quot;,
+CURLOPT_RETURNTRANSFER =&gt; true,
+CURLOPT_HTTPHEADER =&gt; [
+&quot;x-AuthKey: {X-Authkey}&quot;
+],
+]);
+
+$response = curl_exec($curl);
+curl_close($curl);
+
+echo $response;
+?&gt;`,
+                Python: `import requests
+
+url = &quot;https://api.vehicledatabases.com/market-value/v2/{vin}&quot;
+
+headers = {
+&quot;x-AuthKey&quot;: &quot;{X-Authkey}&quot;
+}
+
+response = requests.get(url, headers=headers)
+print(response.json())`,
+            },
+        },
+        {
+            id: &quot;vin-decoder&quot;,
+            title: &quot;VIN Decoder API&quot;,
+            description: &quot;Our VIN Decoder API provides comprehensive vehicle details including year, make, model, trim, engine type, transmission, and over 50+ data points from a single VIN lookup.&quot;,
+            link: { label: &quot;Learn more&quot;, href: &quot;#&quot; },
+            snippets: {
+                default: `var request = require(&#39;request&#39;);
+
+var options = {
+&#39;method&#39;: &#39;GET&#39;,
+&#39;url&#39;: &#39;https://api.vehicledatabases.com/vin-decoder/v1/{vin}&#39;,
+&#39;headers&#39;: {
+&#39;x-AuthKey&#39;: &#39;{X-Authkey}&#39;
+}
+};
+
+request(options, function (error, response) {
+if (error) throw new Error(error);
+console.log(response.body);
+});`,
+            },
+        },
+        {
+            id: &quot;maintenance&quot;,
+            title: &quot;Maintenance API&quot;,
+            description: &quot;Get the recommended maintenance schedule and intervals for any vehicle by VIN or year, make, and model. Perfect for building service reminder features into your application.&quot;,
+            link: { label: &quot;Learn more&quot;, href: &quot;#&quot; },
+            snippets: {
+                default: `// Maintenance API Data Fetcher`,
+            },
+        },
+        {
+            id: &quot;license-plate&quot;,
+            title: &quot;License Plate API&quot;,
+            description: &quot;Decode any US license plate into a VIN and full vehicle details instantly. Supports all 50 states with near-real-time data synchronization.&quot;,
+            link: { label: &quot;Learn more&quot;, href: &quot;#&quot; },
+            snippets: {
+                default: `// License Plate API Data Fetcher`,
+            },
+        },
+        {
+            id: &quot;ocr&quot;,
+            title: &quot;OCR API&quot;,
+            description: &quot;Capture VINs and license plate numbers from images using our advanced Optical Character Recognition API. Returns decoded text and vehicle data in a single request.&quot;,
+            link: { label: &quot;Learn more&quot;, href: &quot;#&quot; },
+            snippets: {
+                default: `// OCR API Data Fetcher`,
+            },
+        },
+    ]}
+    ctas={[
+        {
+            label: &quot;View Documentation&quot;,
+            href: &quot;#&quot;,
+            variant: &quot;primary&quot;,
+            icon: { src: &quot;/images/arrow-white.svg&quot;, width: 8, height: 12 },
+        },
+        {
+            label: &quot;Schedule a Demo&quot;,
+            href: &quot;#&quot;,
+            variant: &quot;secondary&quot;,
+            icon: { src: &quot;/images/calendar-icon.svg&quot;, width: 14, height: 14 },
+        },
+    ]} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Accordion Grid</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const AccordionGrid = () =&gt; &lt;Accordions
+    variant=&quot;accordionGrid&quot;
+    subheading=&quot;Automotive Industry -&quot;
+    heading=&quot;Powerful Usage for Every Business&quot;
+    description=&quot;Explore how our high-performance vehicle data APIs can transform your business operations and customer experience.&quot;
+    columns={[
+        {
+            items: [
+                {
+                    id: &quot;flow-1&quot;,
+                    title: &quot;Improve Customer Experience with Instant Vehicle Data&quot;,
+                    subtitle: &quot;Flow 1&quot;,
+                    content: [
+                        {
+                            type: &quot;list&quot;,
+                            title: &quot;VIN Decoder APIs instantly return:&quot;,
+                            items: [
+                                &quot;Make, model, year, and trim&quot;,
+                                &quot;Engine, transmission, and drivetrain&quot;,
+                                &quot;Factory specs and vehicle features&quot;
+                            ]
+                        },
+                        {
+                            type: &quot;list&quot;,
+                            title: &quot;Business benefits:&quot;,
+                            items: [
+                                &quot;Faster user onboarding&quot;,
+                                &quot;Reduced form friction&quot;,
+                                &quot;Higher conversion rates&quot;,
+                                &quot;Increased platform trust&quot;
+                            ]
+                        },
+                        {
+                            type: &quot;text&quot;,
+                            content: &quot;Best for: Automotive marketplaces, insurance apps, dealer portals, and inspection platforms.&quot;,
+                            isHighlight: true
+                        }
+                    ]
+                },
+                {
+                    id: &quot;flow-3&quot;,
+                    title: &quot;Enable Smarter Pricing, Valuation &amp; Risk Decisions&quot;,
+                    subtitle: &quot;Flow 3&quot;,
+                    content: [
+                        {
+                            type: &quot;text&quot;,
+                            content: &quot;Access real-time market values and historical pricing data to make informed financial decisions.&quot;
+                        },
+                        {
+                            type: &quot;list&quot;,
+                            title: &quot;Key features:&quot;,
+                            items: [
+                                &quot;Market value estimation&quot;,
+                                &quot;Historical pricing trends&quot;,
+                                &quot;Regional price adjustments&quot;
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: &quot;flow-5&quot;,
+                    title: &quot;Power Smarter Marketing &amp; Personalization&quot;,
+                    subtitle: &quot;Flow 5&quot;,
+                    content: [
+                        {
+                            type: &quot;text&quot;,
+                            content: &quot;Deliver highly relevant marketing messages based on the exact vehicle specifications of your customers.&quot;
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            items: [
+                {
+                    id: &quot;flow-2&quot;,
+                    title: &quot;Automate Vehicle Identification &amp; Reduce Manual Work&quot;,
+                    subtitle: &quot;Flow 2&quot;,
+                    content: [
+                        {
+                            type: &quot;text&quot;,
+                            content: &quot;VIN decoding removes the need for long manual data entry forms by auto-filling vehicle information.&quot;
+                        },
+                        {
+                            type: &quot;list&quot;,
+                            title: &quot;Operational advantages:&quot;,
+                            items: [
+                                &quot;Lower data errors&quot;,
+                                &quot;Faster processing workflows&quot;,
+                                &quot;Lower support and labor costs&quot;,
+                                &quot;Improved internal efficiency&quot;
+                            ]
+                        },
+                        {
+                            type: &quot;list&quot;,
+                            title: &quot;Business benefits:&quot;,
+                            items: [
+                                &quot;Faster user onboarding&quot;,
+                                &quot;Reduced form friction&quot;,
+                                &quot;Higher conversion rates&quot;,
+                                &quot;Increased platform trust&quot;
+                            ]
+                        },
+                        {
+                            type: &quot;text&quot;,
+                            content: &quot;Ideal for: Fleet operators, rental services, car marketplaces, and registration platforms.&quot;,
+                            isHighlight: true
+                        }
+                    ]
+                },
+                {
+                    id: &quot;flow-4&quot;,
+                    title: &quot;Prevent Fraud &amp; Verify Vehicle Identity&quot;,
+                    subtitle: &quot;Flow 4&quot;,
+                    content: [
+                        {
+                            type: &quot;text&quot;,
+                            content: &quot;Cross-reference VIN data with government and insurance records to verify vehicle authenticity.&quot;
+                        }
+                    ]
+                },
+                {
+                    id: &quot;flow-6&quot;,
+                    title: &quot;Reduce Development Time &amp; Accelerate Product Launch&quot;,
+                    subtitle: &quot;Flow 6&quot;,
+                    content: [
+                        {
+                            type: &quot;text&quot;,
+                            content: &quot;Our easy-to-integrate REST APIs allow developers to build vehicle-centric features in days, not months.&quot;
+                        }
+                    ]
+                }
+            ]
+        }
+    ]} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">FAQ</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const FAQ = () =&gt; &lt;Accordions
+    variant=&quot;FAQAccordion&quot;
+    items={[
+        {
+            id: &quot;1&quot;,
+            question: &quot;What is Vehicle Databases?&quot;,
+            answer: &quot;Vehicle Databases provides accurate vehicle data and VIN decoding APIs. Our API database helps businesses access essential vehicle information, streamline development, and enhance their products.&quot;
+        },
+        {
+            id: &quot;2&quot;,
+            question: &quot;How to use car API?&quot;,
+            answer: &quot;Using our car API is simple. Once you have an API key, you can make RESTful requests to our endpoints with a VIN or vehicle parameters to receive structured JSON data.&quot;
+        },
+        {
+            id: &quot;3&quot;,
+            question: &quot;How can Vehicle Databases benefit my company?&quot;,
+            answer: &quot;It streamlines inventory management, powers search filters, and provides accurate technical specifications for automotive platforms, leading to better user experiences.&quot;
+        },
+        {
+            id: &quot;4&quot;,
+            question: &quot;Why choose Vehicle Databases?&quot;,
+            answer: &quot;We offer the most comprehensive and up-to-date dataset for US vehicles, with high uptime, low latency, and a developer-friendly API.&quot;
+        },
+        {
+            id: &quot;5&quot;,
+            question: &quot;What is an automotive database?&quot;,
+            answer: &quot;An automotive database is a structured collection of technical data about vehicles, including makes, models, years, specifications, and VIN-related information.&quot;
+        }
+    ]} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  no-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Button">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Button</h2>
+      <div class="badges">
+        <label for="c-1-example-button-props" class="badge ok as-toggle">5 prop types</label>
+        
+        <label for="c-1-example-button-stories" class="badge ok as-toggle">4 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/stories/Button.stories.ts">example-button · ./src/stories/Button.stories.ts</div>
+    
+    <div class="hint">Primary UI component for user interaction</div>
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  
+  <input id="c-1-example-button-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-1-example-button-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">5 prop types</span>
+            </div>
+            <pre><code>Component: src/stories/Button.tsx::Button</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>/**
+ * What background color to use
+ */
+backgroundColor?: string
+
+/**
+ * Button contents
+ */
+label: string
+
+/**
+ * Optional click handler
+ */
+onClick?: () =&gt; void
+
+/**
+ * Is this the principal call to action on the page?
+ */
+primary?: boolean = false
+
+/**
+ * How large should the button be?
+ */
+size?: &#39;small&#39; | &#39;medium&#39; | &#39;large&#39; = &#39;medium&#39;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Button } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Primary</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Primary = () =&gt; &lt;Button onClick={fn()} primary label=&quot;Button&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Secondary</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Secondary = () =&gt; &lt;Button onClick={fn()} label=&quot;Button&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Large</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Large = () =&gt; &lt;Button onClick={fn()} size=&quot;large&quot; label=&quot;Button&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Small</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Small = () =&gt; &lt;Button onClick={fn()} size=&quot;small&quot; label=&quot;Button&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Cards">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Cards</h2>
+      <div class="badges">
+        <label for="c-2-ui-components-cards-props" class="badge ok as-toggle">3 prop types</label>
+        <label for="c-2-ui-components-cards-info" class="badge info as-toggle">1 info</label>
+        <label for="c-2-ui-components-cards-stories" class="badge ok as-toggle">30 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/ui/cards.stories.tsx">ui-components-cards · ./src/components/ui/cards.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-2-ui-components-cards-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-2-ui-components-cards-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-2-ui-components-cards-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">3 prop types</span>
+            </div>
+            <pre><code>Component: src/components/ui/cards.tsx::Cards</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string
+
+hoverable?: boolean
+
+variant: | &quot;h3Body&quot;
+| &quot;iconBodyInline&quot;
+| &quot;iconBodyNormal&quot;
+| &quot;WithFeaturedImage&quot;
+| &quot;h3BodyRedirect&quot;
+| &quot;iconH3BodyCTA&quot;
+| &quot;iconBodyProgressBody&quot;
+| &quot;logoBodyDividerBody&quot;
+| &quot;bodyOnly&quot;
+| &quot;h3BodyListsBodyCTA&quot;
+| &quot;twoColumnH3BodyListsBodyImage&quot;
+| &quot;iconHeadingInline&quot;
+| &quot;headingAndImageStack&quot;
+| &quot;testimonial&quot;
+| &quot;testimonialSpecial&quot;
+| &quot;apiTestCard&quot;
+| &quot;technical&quot;
+| &quot;queryForm&quot;
+| &quot;borderlessCardWithIcon&quot;
+| &quot;IconH3InlineAndBody&quot;
+| &quot;SlidingCards&quot;
+| &quot;H3BodyLinkText&quot;
+| &quot;RelatedAPI&quot;
+| &quot;TwoColumnsLists&quot;
+| &quot;HeadingAndBodyUnderLists&quot;
+| &quot;VideoCard&quot;
+| &quot;HowItWorkMain&quot;
+| &quot;DownloadApp&quot;
+| &quot;HeadingBodyImageCTAStack&quot;
+| &quot;CardGrid&quot;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Cards } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">H 3 Body</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const H3Body = () =&gt; &lt;Cards variant=&quot;h3Body&quot; heading=&quot;Full History Reports&quot; richText={MOCK_TEXT} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Icon Body Inline</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const IconBodyInline = () =&gt; &lt;Cards variant=&quot;iconBodyInline&quot; icon=&quot;Database&quot; richText={MOCK_TEXT} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Icon Body Normal</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const IconBodyNormal = () =&gt; &lt;Cards variant=&quot;iconBodyNormal&quot; icon=&quot;ShieldCheck&quot; richText={MOCK_TEXT} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">With Featured Image</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const WithFeaturedImage = () =&gt; &lt;Cards
+    variant=&quot;WithFeaturedImage&quot;
+    heading=&quot;Technical Documentation&quot;
+    image=&quot;https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&amp;fit=crop&amp;q=80&amp;w=800&quot;
+    richText={MOCK_TEXT} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">H 3 Body Redirect</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const H3BodyRedirect = () =&gt; &lt;Cards
+    variant=&quot;h3BodyRedirect&quot;
+    heading=&quot;View API Reference&quot;
+    richText=&quot;&lt;p&gt;Explore our documentation and start integrating in minutes with our developer-friendly tools.&lt;/p&gt;&quot;
+    link=&quot;#&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Icon H 3 Body CTA</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const IconH3BodyCTA = () =&gt; &lt;Cards
+    variant=&quot;iconH3BodyCTA&quot;
+    icon=&quot;Zap&quot;
+    heading=&quot;Instant Lookup&quot;
+    richText=&quot;&lt;p&gt;Get real-time data for any VIN with our high-performance lookup engine.&lt;/p&gt;&quot;
+    cta={{
+      label: &quot;Get Started&quot;,
+      href: &quot;#&quot;,
+      variant: &quot;primary&quot;,
+    }} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Icon Body Progress Body</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const IconBodyProgressBody = () =&gt; &lt;Cards
+    variant=&quot;iconBodyProgressBody&quot;
+    icon=&quot;Activity&quot;
+    richText=&quot;&lt;p&gt;Processing your vehicle data request. This usually takes just a few seconds.&lt;/p&gt;&quot;
+    progress={75}
+    bottomText=&quot;&lt;p&gt;Estimated time remaining: 2 seconds&lt;/p&gt;&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Logo Body Divider Body</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LogoBodyDividerBody = () =&gt; &lt;Cards
+    variant=&quot;logoBodyDividerBody&quot;
+    logo=&quot;https://upload.wikimedia.org/wikipedia/commons/4/44/BMW.svg&quot;
+    richText=&quot;&lt;p&gt;Official data provider for authorized BMW service centers and dealerships nationwide.&lt;/p&gt;&quot;
+    bottomText=&quot;&lt;p&gt;Verified Partner Since 2021&lt;/p&gt;&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Body Only</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const BodyOnly = () =&gt; &lt;Cards
+    variant=&quot;bodyOnly&quot;
+    richText=&quot;&lt;p&gt;&lt;strong&gt;Pro Tip:&lt;/strong&gt; Use the sandbox environment to test your integration before going live with production data.&lt;/p&gt;&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">H 3 Body Lists Body CTA</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const H3BodyListsBodyCTA = () =&gt; &lt;Cards
+    variant=&quot;h3BodyListsBodyCTA&quot;
+    heading=&quot;Premium Enterprise Plan&quot;
+    richText=&quot;&lt;p&gt;Everything you need to scale your vehicle data operations globally.&lt;/p&gt;&quot;
+    listItems={[
+      { text: &quot;Unlimited daily lookups&quot; },
+      { text: &quot;Priority support 24/7&quot; },
+      { text: &quot;Custom API endpoints&quot; },
+      { text: &quot;Whitelabel dashboard&quot; },
+    ]}
+    cta={{
+      label: &quot;Contact Sales&quot;,
+      href: &quot;#&quot;,
+    }} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Two Column H 3 Body Lists Body Image</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const TwoColumnH3BodyListsBodyImage = () =&gt; &lt;Cards
+    variant=&quot;twoColumnH3BodyListsBodyImage&quot;
+    heading=&quot;Advanced VIN Decoding&quot;
+    richText=&quot;&lt;p&gt;Our advanced decoder breaks down every complex aspect of a vehicle&#39;s history, from factory options to service records.&lt;/p&gt;&quot;
+    listItems={[
+      { text: &quot;Standard Equipment Data&quot; },
+      { text: &quot;Optional Features List&quot; },
+      { text: &quot;Recall &amp; Safety Alerts&quot; },
+      { text: &quot;Odometer History Check&quot; },
+      { text: &quot;Auction Sales Records&quot; },
+      { text: &quot;Market Value Estimates&quot; },
+    ]}
+    image=&quot;https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&amp;fit=crop&amp;q=80&amp;w=800&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Heading And Image Stack</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const HeadingAndImageStack = () =&gt; &lt;Cards
+    variant=&quot;headingAndImageStack&quot;
+    heading=&quot;Vehicle Intelligence API&quot;
+    image=&quot;https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&amp;fit=crop&amp;q=80&amp;w=800&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Borderless Card With Icon</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const BorderlessCardWithIcon = () =&gt; &lt;Cards
+    variant=&quot;borderlessCardWithIcon&quot;
+    icon=&quot;Layers&quot;
+    heading=&quot;API Testing Platform for Everyone&quot;
+    richText=&quot;Easily test APIs, receive JSON responses, and visualize them in a user-friendly interface. Our platform caters to both developers and non-technical users.&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Icon H 3 Inline And Body</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const IconH3InlineAndBody = () =&gt; &lt;Cards
+    variant=&quot;IconH3InlineAndBody&quot;
+    icon=&quot;DatabaseZap&quot;
+    heading=&quot;Fast Response Times&quot;
+    richText=&quot;Easily manage your active plans and subscriptions through our intuitive interface. Upgrade, downgrade, or modify your plan with just a few clicks.&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Icon Heading Inline</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const IconHeadingInline = () =&gt; &lt;Cards
+    variant=&quot;iconHeadingInline&quot;
+    icon=&quot;ShieldAlert&quot;
+    heading=&quot;Safety Recalls&quot;
+    richText=&quot;&lt;p&gt;Stay informed about any safety concerns or manufacturer recalls affecting this vehicle model.&lt;/p&gt;&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Testimonial</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Testimonial = () =&gt; &lt;Cards
+    variant=&quot;testimonial&quot;
+    title=&quot;Easy to use, Excellent service&quot;
+    richText=&quot;&lt;p&gt;Great service, their apis have allowed my business to quickly get up and running, with minimal development costs. Someone is also always at hand whether it be Whatsapp or over the phone to help with any issues. Would 100% recommend&lt;/p&gt;&quot;
+    author=&quot;Lionel Yarbol&quot;
+    role=&quot;CEO at Yarbol Logistics&quot;
+    accentColor=&quot;#F9BD24&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Testimonial Special</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const TestimonialSpecial = () =&gt; &lt;Cards
+    variant=&quot;testimonialSpecial&quot;
+    richText=&quot;Vehicle Databases has been an outstanding partner for our platform. Their API is fast, reliable, and delivers consistently high-quality vehicle data, which is critical for the accuracy and trust our users expect.&quot;
+    author=&quot;Todd Matherne&quot;
+    role=&quot;Founder, VinDetecta&quot;
+    avatar=&quot;/images/vindetecta-logo.svg&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Api Test Card</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const ApiTestCard = () =&gt; &lt;Cards variant=&quot;apiTestCard&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Technical</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Technical = () =&gt; &lt;Cards
+    variant=&quot;technical&quot;
+    icon=&quot;Code2&quot;
+    heading=&quot;Vehicle Model Lookup&quot;
+    subheading=&quot;GET /v1/vin-decode/{vin}&quot;
+    codeSnippet={`{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;data&quot;: {
+    &quot;make&quot;: &quot;BMW&quot;,
+    &quot;model&quot;: &quot;328i&quot;,
+    &quot;year&quot;: 2015
+  }
+}`}
+    subheading2=&quot;Response Schema Details&quot;
+    tableData={[
+      { field: &quot;make&quot;, type: &quot;string&quot;, description: &quot;The manufacturer name&quot; },
+      { field: &quot;model&quot;, type: &quot;string&quot;, description: &quot;The vehicle model name&quot; },
+      { field: &quot;year&quot;, type: &quot;number&quot;, description: &quot;The manufacturing year&quot; }
+    ]}
+    richText=&quot;&lt;p&gt;For full schema details, please refer to the core documentation.&lt;/p&gt;&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Query Form</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const QueryForm = () =&gt; &lt;Cards
+    variant=&quot;queryForm&quot;
+    subheading=&quot;Get in touch&quot;
+    heading=&quot;Have more questions?&quot;
+    formLabel=&quot;Send in a query&quot;
+    submitLabel=&quot;Submit Query&quot;
+    description=&quot;Book a demo to connect directly with our team and explore how we can best serve your needs.&quot;
+    media={{
+      type: &quot;image&quot;,
+      url: &quot;https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=800&amp;q=80&quot;,
+      alt: &quot;Premium sports car&quot;,
+    }}
+    formFields={[
+      { name: &quot;firstName&quot;, label: &quot;First Name&quot;, placeholder: &quot;First Name&quot;, type: &quot;text&quot;, fullWidth: true },
+      { name: &quot;email&quot;, label: &quot;Email Address&quot;, placeholder: &quot;Email Address&quot;, type: &quot;email&quot; },
+      { name: &quot;phone&quot;, label: &quot;Contact Number&quot;, placeholder: &quot;Contact Number&quot;, type: &quot;tel&quot; },
+      { name: &quot;message&quot;, label: &quot;Message&quot;, placeholder: &quot;Message&quot;, type: &quot;textarea&quot;, fullWidth: true },
+    ]}
+    sidebarCtas={[
+      { label: &quot;Book a Demo&quot;, href: &quot;#&quot;, variant: &quot;secondary&quot;, icon: &quot;Calendar&quot; },
+      { label: &quot;Chat us on Whatsapp&quot;, href: &quot;#&quot;, variant: &quot;whatsapp&quot;, icon: &quot;MessageSquare&quot; },
+    ]} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Sliding Cards</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const SlidingCards = () =&gt; &lt;Cards
+    variant=&quot;SlidingCards&quot;
+    items={[
+      {
+        icon: &quot;Zap&quot;,
+        title: &quot;Fast Response Times&quot;,
+        description: &quot;Easily manage your active plans and subscriptions through our intuitive interface. Upgrade, downgrade, or modify your plan with just a few clicks.&quot;,
+      },
+      {
+        icon: &quot;Layers&quot;,
+        title: &quot;Scalability&quot;,
+        description: &quot;Our infrastructure adapts effortlessly to changing demands, maintaining top performance and reliability.&quot;,
+      },
+      {
+        icon: &quot;ShieldCheck&quot;,
+        title: &quot;99.99% Uptime&quot;,
+        description: &quot;Data is sourced from trusted manufacturer and industry datasets.&quot;,
+      },
+      {
+        icon: &quot;Database&quot;,
+        title: &quot;Unmatched Data&quot;,
+        description: &quot;Optimized for quick lookups and no unpredictable slowdowns or bottlenecks.&quot;,
+      },
+      {
+        icon: &quot;Layout&quot;,
+        title: &quot;Easy Integration&quot;,
+        description: &quot;Integration takes less than 10 minutes. Zero technical knowledge required.&quot;,
+      },
+    ]} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">H 3 Body Link Text</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const H3BodyLinkText = () =&gt; &lt;Cards
+    variant=&quot;H3BodyLinkText&quot;
+    heading=&quot;{orange:VIN Decoding} APIs&quot;
+    richText=&quot;Fetch full vehicle information by VIN or YMM to get the complete specs, engine information, color options, packages, and more for any car.&quot;
+    linkText=&quot;Learn more&quot;
+    linkHref=&quot;#&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Related API</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const RelatedAPI = () =&gt; &lt;Cards
+    variant=&quot;RelatedAPI&quot;
+    heading=&quot;Related APIs You Might Be Interested In:&quot;
+    apis={[
+      { label: &quot;Motorcycle Decoder API&quot;, href: &quot;#&quot; },
+      { label: &quot;Vehicle Specifications API&quot;, href: &quot;#&quot; },
+      { label: &quot;Electric Vehicle Specifications API&quot;, href: &quot;#&quot; },
+      { label: &quot;Explore More APIs&quot;, href: &quot;#&quot; },
+    ]} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Two Columns Lists</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const TwoColumnsLists = () =&gt; &lt;Cards
+    variant=&quot;TwoColumnsLists&quot;
+    heading=&quot;VIN Decoder APIs are widely used in:&quot;
+    listLeft={[
+      { text: &quot;Auto dealerships&quot;, icon: &quot;BadgeCheck&quot; },
+      { text: &quot;Insurance companies&quot;, icon: &quot;BadgeCheck&quot; },
+      { text: &quot;Vehicle marketplaces&quot;, icon: &quot;BadgeCheck&quot; },
+      { text: &quot;Fleet and rental services&quot;, icon: &quot;BadgeCheck&quot; },
+    ]}
+    listRight={[
+      { text: &quot;Government and compliance platforms&quot;, icon: &quot;BadgeCheck&quot; },
+      { text: &quot;Aftermarket parts sellers&quot;, icon: &quot;BadgeCheck&quot; },
+      { text: &quot;Mobility and transportation startups&quot;, icon: &quot;BadgeCheck&quot; },
+    ]} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Heading And Body Under Lists</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const HeadingAndBodyUnderLists = () =&gt; &lt;Cards
+    variant=&quot;HeadingAndBodyUnderLists&quot;
+    heading=&quot;The Europe VIN Decoding API returns:&quot;
+    lists={[
+      [
+        { text: &quot;Make&quot; },
+        { text: &quot;Model&quot; },
+        { text: &quot;Model year&quot; },
+        { text: &quot;Body style&quot; },
+      ],
+      [
+        { text: &quot;Vehicle class&quot; },
+        { text: &quot;Vehicle type&quot; },
+        { text: &quot;Manufacturer&quot; },
+        { text: &quot;Country&quot; },
+      ],
+      [
+        { text: &quot;Region&quot; },
+        { text: &quot;Vehicle specifications&quot; },
+        { text: &quot;Standard equipment&quot; },
+        { text: &quot;Optional equipment&quot; },
+      ],
+    ]}
+    footerHeading=&quot;Europe VIN Decoding API&quot;
+    footerRichText={`
+      &lt;p&gt;The US VIN Decoder API is designed for vehicles manufactured for or sold in the United States and Canada. It supports standard 17-character VINs and covers vehicles from 1980 to the present.&lt;/p&gt;
+      &lt;p&gt;European vehicles follow different standards than US vehicles, and decoding them properly requires a different approach. The Europe VIN Decoding API is designed specifically for European-market vehicles and supports VINs from 1980 to the present.&lt;/p&gt;
+      &lt;p&gt;It is commonly used by businesses handling European registrations, imports, and cross-border vehicle data.&lt;/p&gt;
+      &lt;p&gt;Using a Europe-specific VIN API helps avoid missing or incorrect data that often occurs when European VINs are decoded using US-only systems.&lt;/p&gt;
+    `} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Video Card</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const VideoCard = () =&gt; &lt;Cards
+    variant=&quot;VideoCard&quot;
+    thumbnail=&quot;/images/video-thumbnail.jpg&quot;
+    heading=&quot;Detailed Vehicle Specifications&quot;
+    subheading=&quot;in seconds with VIN Decoder API&quot;
+    videoHref=&quot;#&quot;
+    description=&quot;The Vehicle Databases VIN Decoder API allows businesses or individuals to identify a vehicle’s make, model, year, engine, and key specifications using a standard 17-digit VIN. It’s fast, reliable, and designed to work across global markets, making it easy to power your products (e.g., websites, apps, and internal systems) with trusted vehicle data. Our VIN Decoder API translates a 17-digit VIN into accurate vehicle information, built for consistency at scale.&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">How It Work Main</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const HowItWorkMain = () =&gt; &lt;Cards
+    variant=&quot;HowItWorkMain&quot;
+    heading=&quot;How&quot;
+    subheading=&quot;the VIN Decoder API works?&quot;
+    description=&quot;We offer different endpoints based on the region. Region-Specific Endpoints: US, Canada, and Europe—optimized for each market. We are actively working on adding support for other regions &amp; improving our VIN decoding technology.&quot;
+    ctas={[
+      { label: &quot;Get Started&quot;, href: &quot;#&quot;, variant: &quot;primary-gradient&quot; },
+      { label: &quot;Read Docs&quot;, href: &quot;#&quot;, variant: &quot;secondary-border&quot; },
+    ]}
+    steps={[
+      { title: &quot;Send VIN&quot;, description: &quot;via API request (Simple GET request).&quot; },
+      { title: &quot;Receive JSON&quot;, description: &quot;with structured vehicle data.&quot; },
+      { title: &quot;Integrate instantly&quot;, description: &quot;into your app, website, or internal system&quot; },
+    ]} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Download App</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const DownloadApp = () =&gt; &lt;Cards
+    variant=&quot;DownloadApp&quot;
+    heading=&quot;Experience Our License Plate Decoding API Live in Action&quot;
+    body=&quot;The VIN decoder and vehicle History app uses the License plate decoder API from Vehicle Databases to provide License plate decoding and vehicle history reports to vehicle shoppers, sellers, and dealerships with US license plates. Download the app from the App store and Play store to see how it works.&quot;
+    media={{
+      type: &quot;image&quot;,
+      src: &quot;/images/video-thumbnail.jpg&quot;,
+    }}
+    googlePlayUrl=&quot;#&quot;
+    ukGooglePlayUrl=&quot;#&quot;
+    ukAppStoreUrl=&quot;#&quot;
+    appStoreUrl=&quot;#&quot;
+    secondaryText=&quot;For UK users Smart Car Check App provides this functionality. Download the app from the App store and Play store.&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Heading Body Image CTA Stack</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const HeadingBodyImageCTAStack = () =&gt; &lt;Cards
+    variant=&quot;HeadingBodyImageCTAStack&quot;
+    heading=&quot;Sales listing history API&quot;
+    body=&quot;If you want to get access to the previous sales history of any vehicle across the UK, USA and Canada, we&#39;ve got you covered. Signing up for our sales history API will provide you with sales listing data. You can easily look up sales history with a VIN.&quot;
+    image=&quot;/images/video-thumbnail.jpg&quot;
+    cta={{
+      label: &quot;Learn about Sales Listing History API&quot;,
+      href: &quot;#&quot;,
+    }} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Card Grid</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const CardGrid = () =&gt; &lt;Cards
+    variant=&quot;CardGrid&quot;
+    items={[
+      {
+        title: &quot;VIN Decoding APIs&quot;,
+        description: &quot;Fetch full vehicle information by VIN or YMM to get the complete specs, engine information, color options, packages, and more for any car.&quot;,
+        href: &quot;#&quot;,
+      },
+      {
+        title: &quot;OCR APIs&quot;,
+        description: &quot;OCR APIs capture VINs &amp; License plates and converts to text in seconds.&quot;,
+        href: &quot;#&quot;,
+      },
+      {
+        title: &quot;License Plate Decoding APIs&quot;,
+        description: &quot;Decode the US license plate into VIN, then break down the vehicle information attached to it.&quot;,
+        href: &quot;#&quot;,
+      },
+      {
+        title: &quot;Market Value APIs&quot;,
+        description: &quot;Fetch the vehicle&#39;s market value estimation for private parties, trade-ins, or dealers by VIN.&quot;,
+        href: &quot;#&quot;,
+      },
+      {
+        title: &quot;Maintenance API&quot;,
+        description: &quot;Get the recommended maintenance schedule and details by VIN or year, make, and model.&quot;,
+        href: &quot;#&quot;,
+      },
+      {
+        title: &quot;Repair API&quot;,
+        description: &quot;Get full information on the vehicle&#39;s warranty records by VIN.&quot;,
+        href: &quot;#&quot;,
+      },
+    ]} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="CodeDashboard">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> CodeDashboard</h2>
+      <div class="badges">
+        <label for="c-3-ui-intro-sub-components-codedashboard-props" class="badge ok as-toggle">3 prop types</label>
+        <label for="c-3-ui-intro-sub-components-codedashboard-info" class="badge info as-toggle">1 info</label>
+        <label for="c-3-ui-intro-sub-components-codedashboard-stories" class="badge ok as-toggle">2 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/intro/code-dashboard.stories.tsx">ui-intro-sub-components-codedashboard · ./src/components/intro/code-dashboard.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-3-ui-intro-sub-components-codedashboard-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-3-ui-intro-sub-components-codedashboard-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-3-ui-intro-sub-components-codedashboard-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">3 prop types</span>
+            </div>
+            <pre><code>Component: src/components/intro/code-dashboard.tsx::CodeDashboard</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string
+
+code?: string
+
+theme?: &quot;dark&quot; | &quot;light&quot; = &quot;dark&quot;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { CodeDashboard } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Dark Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const DarkTheme = () =&gt; &lt;CodeDashboard
+    code={JSON.stringify({
+      vin: &quot;5TQYK30D8FS503804&quot;,
+      make: &quot;Tesla&quot;,
+      model: &quot;Model S&quot;,
+      year: 2023,
+      status: &quot;Verified&quot;,
+    }, null, 2)}
+    theme=&quot;dark&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Light Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LightTheme = () =&gt; &lt;CodeDashboard
+    code={JSON.stringify({
+      vin: &quot;5TQYK30D8FS503804&quot;,
+      make: &quot;Tesla&quot;,
+      model: &quot;Model S&quot;,
+      year: 2023,
+      status: &quot;Verified&quot;,
+    }, null, 2)}
+    theme=&quot;light&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="CodeSnippet">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> CodeSnippet</h2>
+      <div class="badges">
+        <label for="c-4-ui-intro-sub-components-codesnippet-props" class="badge ok as-toggle">11 prop types</label>
+        <label for="c-4-ui-intro-sub-components-codesnippet-info" class="badge info as-toggle">1 info</label>
+        <label for="c-4-ui-intro-sub-components-codesnippet-stories" class="badge ok as-toggle">6 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/intro/code-snippet.stories.tsx">ui-intro-sub-components-codesnippet · ./src/components/intro/code-snippet.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-4-ui-intro-sub-components-codesnippet-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-4-ui-intro-sub-components-codesnippet-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-4-ui-intro-sub-components-codesnippet-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">11 prop types</span>
+            </div>
+            <pre><code>Component: src/components/intro/code-snippet.tsx::CodeSnippet</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>alt?: string
+
+className?: string
+
+code?: string
+
+image?: string
+
+items?: { label: string; value: string }[]
+
+maxHeight?: string = &quot;720px&quot;
+
+maxWidth?: string = &quot;640px&quot;
+
+minWidth?: string = &quot;640px&quot;
+
+sideCard?: { 
+  title: string; 
+  description: string; 
+  buttonText: string; 
+  buttonHref: string;
+}
+
+toggleOptions?: { id: string; label: string; code: string }[]
+
+variant?: &quot;default&quot; | &quot;with-language-selector&quot; | &quot;with-image&quot; | &quot;WithCardAndLists&quot; | string = &quot;default&quot;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { CodeSnippet } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">DEFAULT: CLEAN CODE WINDOW Scenario: Basic JSON output, no image, no selector.</div>
+              <pre><code>const Default = () =&gt; &lt;CodeSnippet
+    variant=&quot;default&quot;
+    code={`{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;data&quot;: {
+    &quot;vin&quot;: &quot;5TQYK30D8FS503804&quot;,
+    &quot;make&quot;: &quot;Tesla&quot;,
+    &quot;model&quot;: &quot;Model Y&quot;
+  }
+}`} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">With Language Selector</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">WITH LANGUAGE SELECTOR Scenario: Full developer integration mockup with Node, React, PHP, Python tabs.</div>
+              <pre><code>const WithLanguageSelector = () =&gt; &lt;CodeSnippet variant=&quot;with-language-selector&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">With Image</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">WITH IMAGE (formerly Python) Scenario: Code window with an overlaid vehicle image.</div>
+              <pre><code>const WithImage = () =&gt; &lt;CodeSnippet
+    variant=&quot;with-image&quot;
+    code={`import requests\n\nurl = &quot;https://api.vehicledatabases.com/lookup&quot;\nresponse = requests.get(url, params={&quot;vin&quot;: &quot;...&quot;})\nprint(response.json())`}
+    image=&quot;https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&amp;w=1000&amp;auto=format&amp;fit=crop&quot;
+    alt=&quot;Tesla Model Y Overlay&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Special Sizing</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">SPECIAL SIZING Scenario: Adjusted constraints for a specific layout.</div>
+              <pre><code>const SpecialSizing = () =&gt; &lt;CodeSnippet variant=&quot;with-language-selector&quot; minWidth=&quot;800px&quot; maxHeight=&quot;500px&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">With Card And Lists</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">WITH CARD AND LISTS Scenario: Professional API dashboard view with entity details and documentation link.</div>
+              <pre><code>const WithCardAndLists = () =&gt; &lt;CodeSnippet
+    variant=&quot;WithCardAndLists&quot;
+    code={`{
+  &quot;year&quot;: 2023,
+  &quot;make&quot;: &quot;Harley-Davidson&quot;,
+  &quot;model&quot;: &quot;Road Glide Special&quot;,
+  &quot;trim&quot;: &quot;Base&quot;,
+  &quot;price&quot;: {
+    &quot;base_msrp&quot;: 30000,
+    &quot;delivery_charges&quot;: &quot;N/A&quot;,
+    &quot;currency&quot;: &quot;USD&quot;
+  },
+  &quot;vehicle&quot;: {
+    &quot;class&quot;: &quot;Class III&quot;,
+    &quot;category&quot;: &quot;Touring&quot;
+  }
+}`}
+    items={[
+      { label: &quot;Year&quot;, value: &quot;2023&quot; },
+      { label: &quot;Make&quot;, value: &quot;Harley-Davidson&quot; },
+      { label: &quot;Model&quot;, value: &quot;Road Glide Special&quot; },
+    ]}
+    sideCard={{
+      title: &quot;API Documentation&quot;,
+      description: &quot;We stand committed to providing a seamless and efficient solution to meet the diverse needs of your business within the automotive landscape. As you peruse this documentation, anticipate a rich source of knowledge that will facilitate the effortless integration of these APIs.&quot;,
+      buttonText: &quot;View Documentation&quot;,
+      buttonHref: &quot;#&quot;,
+    }} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Advanced Vs Basic</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">ADVANCED VS BASIC Scenario: Comparison view between advanced and basic API responses.</div>
+              <pre><code>const AdvancedVsBasic = () =&gt; &lt;CodeSnippet
+    variant=&quot;AdvancedVsBasic&quot;
+    toggleOptions={[
+      {
+        id: &quot;advanced&quot;,
+        label: &quot;Advanced VIN Decoder&quot;,
+        code: `{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;data&quot;: {
+    &quot;intro&quot;: {
+      &quot;vin&quot;: &quot;WBA3A5C50FP604594&quot;
+    },
+    &quot;basic&quot;: {
+      &quot;make&quot;: &quot;BMW&quot;,
+      &quot;model&quot;: &quot;328I&quot;,
+      &quot;year&quot;: &quot;2015&quot;,
+      &quot;trim&quot;: &quot;3-SERIES&quot;,
+      &quot;body_type&quot;: &quot;Sedan/Saloon&quot;,
+      &quot;vehicle_type&quot;: &quot;Passenger Car&quot;,
+      &quot;doors&quot;: &quot;4&quot;,
+      &quot;vehicle_size&quot;: &quot;&quot;,
+      &quot;seating_capacity&quot;: &quot;&quot;
+    },
+    &quot;engine&quot;: {
+      &quot;cylinders&quot;: &quot;4&quot;
+    }
+  }
+}`,
+      },
+      {
+        id: &quot;basic&quot;,
+        label: &quot;Basic VIN Decoder&quot;,
+        code: `{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;data&quot;: {
+    &quot;vin&quot;: &quot;WBA3A5C50FP604594&quot;,
+    &quot;make&quot;: &quot;BMW&quot;,
+    &quot;model&quot;: &quot;328I&quot;,
+    &quot;year&quot;: &quot;2015&quot;
+  }
+}`,
+      },
+    ]} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="CTAButtonGroup">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> CTAButtonGroup</h2>
+      <div class="badges">
+        <label for="c-5-ui-intro-sub-components-ctabuttongroup-props" class="badge ok as-toggle">3 prop types</label>
+        <label for="c-5-ui-intro-sub-components-ctabuttongroup-info" class="badge info as-toggle">1 info</label>
+        <label for="c-5-ui-intro-sub-components-ctabuttongroup-stories" class="badge ok as-toggle">3 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/intro/cta-button-group.stories.tsx">ui-intro-sub-components-ctabuttongroup · ./src/components/intro/cta-button-group.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-5-ui-intro-sub-components-ctabuttongroup-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-5-ui-intro-sub-components-ctabuttongroup-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-5-ui-intro-sub-components-ctabuttongroup-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">3 prop types</span>
+            </div>
+            <pre><code>Component: src/components/intro/cta-button-group.tsx::CTAButtonGroup</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string
+
+ctas: IntroCTA[]
+
+theme?: &quot;dark&quot; | &quot;light&quot; = &quot;dark&quot;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { CTAButtonGroup } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Dark Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const DarkTheme = () =&gt; &lt;CTAButtonGroup ctas={mockCTAs} theme=&quot;dark&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Light Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LightTheme = () =&gt; &lt;CTAButtonGroup ctas={mockCTAs} theme=&quot;light&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Enterprise</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Enterprise = () =&gt; &lt;CTAButtonGroup
+    ctas={[
+      { text: &quot;Contact Sales&quot;, href: &quot;/contact&quot;, variant: &quot;primary&quot; as const },
+      { text: &quot;Book a Demo&quot;, href: &quot;/demo&quot;, variant: &quot;outline&quot; as const },
+      { text: &quot;Pricing&quot;, href: &quot;/pricing&quot;, variant: &quot;ghost&quot; as const },
+    ]}
+    theme=&quot;dark&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="FactsSection">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> FactsSection</h2>
+      <div class="badges">
+        <label for="c-6-components-home-factssection-props" class="badge ok as-toggle">2 prop types</label>
+        <label for="c-6-components-home-factssection-info" class="badge info as-toggle">1 info</label>
+        <label for="c-6-components-home-factssection-stories" class="badge ok as-toggle">3 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/home/facts-section.stories.tsx">components-home-factssection · ./src/components/home/facts-section.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-6-components-home-factssection-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-6-components-home-factssection-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-6-components-home-factssection-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">2 prop types</span>
+            </div>
+            <pre><code>Component: src/components/home/facts-section.tsx::FactsSection</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string
+
+stats?: StatItemProps[] = [
+    { valuePrimary: &quot;50&quot;, valueGradient: &quot;M+&quot;, label: &quot;VINs decoded&quot; },
+    { valuePrimary: &quot;1,&quot;, valueGradient: &quot;200+&quot;, label: &quot;Companies using API&quot; },
+    { valuePrimary: &quot;99.&quot;, valueGradient: &quot;9%&quot;, label: &quot;API uptime SLA&quot; },
+    { valuePrimary: &quot;&lt;200&quot;, valueGradient: &quot;ms&quot;, label: &quot;Avg. response time&quot; },
+]</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { FactsSection } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;FactsSection /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Custom Content</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const CustomContent = () =&gt; &lt;FactsSection
+    stats={[
+      { valuePrimary: &quot;100&quot;, valueGradient: &quot;B+&quot;, label: &quot;API Requests Yearly&quot; },
+      { valuePrimary: &quot;250&quot;, valueGradient: &quot;ms&quot;, label: &quot;P99 Global Latency&quot; },
+      { valuePrimary: &quot;4.9&quot;, valueGradient: &quot;/5&quot;, label: &quot;Developer Satisfaction&quot; },
+      { valuePrimary: &quot;24/&quot;, valueGradient: &quot;7&quot;, label: &quot;Priority Support&quot; },
+    ]} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Single Stat</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const SingleStat = () =&gt; &lt;FactsSection
+    stats={[
+      { valuePrimary: &quot;100&quot;, valueGradient: &quot;%&quot;, label: &quot;Data Integrity Guarantee&quot; },
+    ]} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="FeatureCardList">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> FeatureCardList</h2>
+      <div class="badges">
+        <label for="c-7-ui-intro-sub-components-featurecardlist-props" class="badge ok as-toggle">3 prop types</label>
+        <label for="c-7-ui-intro-sub-components-featurecardlist-info" class="badge info as-toggle">1 info</label>
+        <label for="c-7-ui-intro-sub-components-featurecardlist-stories" class="badge ok as-toggle">2 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/intro/feature-card-list.stories.tsx">ui-intro-sub-components-featurecardlist · ./src/components/intro/feature-card-list.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-7-ui-intro-sub-components-featurecardlist-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-7-ui-intro-sub-components-featurecardlist-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-7-ui-intro-sub-components-featurecardlist-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">3 prop types</span>
+            </div>
+            <pre><code>Component: src/components/intro/feature-card-list.tsx::FeatureCardList</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string
+
+features: Feature[]
+
+theme?: &quot;dark&quot; | &quot;light&quot; = &quot;dark&quot;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { FeatureCardList } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Dark Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const DarkTheme = () =&gt; &lt;FeatureCardList features={mockFeatures} theme=&quot;dark&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Light Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LightTheme = () =&gt; &lt;FeatureCardList features={mockFeatures} theme=&quot;light&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="FeatureGridCard">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> FeatureGridCard</h2>
+      <div class="badges">
+        <label for="c-8-ui-intro-sub-components-featuregridcard-props" class="badge ok as-toggle">4 prop types</label>
+        <label for="c-8-ui-intro-sub-components-featuregridcard-info" class="badge info as-toggle">1 info</label>
+        <label for="c-8-ui-intro-sub-components-featuregridcard-stories" class="badge ok as-toggle">2 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/intro/feature-grid-card.stories.tsx">ui-intro-sub-components-featuregridcard · ./src/components/intro/feature-grid-card.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-8-ui-intro-sub-components-featuregridcard-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-8-ui-intro-sub-components-featuregridcard-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-8-ui-intro-sub-components-featuregridcard-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">4 prop types</span>
+            </div>
+            <pre><code>Component: src/components/intro/feature-grid-card.tsx::FeatureGridCard</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string
+
+items: FeatureItem[]
+
+theme?: &quot;dark&quot; | &quot;light&quot; = &quot;dark&quot;
+
+title?: string</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { FeatureGridCard } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Dark Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const DarkTheme = () =&gt; &lt;FeatureGridCard
+    title=&quot;High-Performance API&quot;
+    items={[
+      { text: &quot;Experience lightning-fast response times&quot; },
+      { text: &quot;Scalable architecture for high volume&quot; },
+      { text: &quot;Enterprise-grade security standards&quot; },
+      { text: &quot;99.99% Guaranteed uptime SLA&quot; },
+    ]}
+    theme=&quot;dark&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Light Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LightTheme = () =&gt; &lt;FeatureGridCard
+    title=&quot;Comprehensive Coverage&quot;
+    items={[
+      { text: &quot;Access data for millions of vehicles&quot; },
+      { text: &quot;North America and Europe support&quot; },
+      { text: &quot;Daily updates from OEM sources&quot; },
+      { text: &quot;Historical data going back 40 years&quot; },
+    ]}
+    theme=&quot;light&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="FeatureList">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> FeatureList</h2>
+      <div class="badges">
+        <label for="c-9-ui-intro-sub-components-featurelist-props" class="badge ok as-toggle">3 prop types</label>
+        <label for="c-9-ui-intro-sub-components-featurelist-info" class="badge info as-toggle">1 info</label>
+        <label for="c-9-ui-intro-sub-components-featurelist-stories" class="badge ok as-toggle">2 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/intro/feature-list.stories.tsx">ui-intro-sub-components-featurelist · ./src/components/intro/feature-list.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-9-ui-intro-sub-components-featurelist-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-9-ui-intro-sub-components-featurelist-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-9-ui-intro-sub-components-featurelist-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">3 prop types</span>
+            </div>
+            <pre><code>Component: src/components/intro/feature-list.tsx::FeatureList</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string
+
+features: Feature[]
+
+theme?: &quot;dark&quot; | &quot;light&quot; = &quot;dark&quot;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { FeatureList } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Dark Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const DarkTheme = () =&gt; &lt;FeatureList features={mockFeatures} theme=&quot;dark&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Light Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LightTheme = () =&gt; &lt;FeatureList features={mockFeatures} theme=&quot;light&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="FlexibleTable">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> FlexibleTable</h2>
+      <div class="badges">
+        <label for="c-10-ui-flexibletable-props" class="badge ok as-toggle">8 prop types</label>
+        <label for="c-10-ui-flexibletable-info" class="badge info as-toggle">1 info</label>
+        <label for="c-10-ui-flexibletable-stories" class="badge ok as-toggle">3 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/ui/flexible-table.stories.tsx">ui-flexibletable · ./src/components/ui/flexible-table.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-10-ui-flexibletable-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-10-ui-flexibletable-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-10-ui-flexibletable-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">8 prop types</span>
+            </div>
+            <pre><code>Component: src/components/ui/flexible-table.tsx::FlexibleTable</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string
+
+columns: Column&lt;T&gt;[]
+
+data: T[]
+
+emptyMessage?: string = &quot;No data available&quot;
+
+isLoading?: boolean
+
+keyExtractor?: (row: T, idx: number) =&gt; string | number
+
+/**
+ * Width of the first (label) column. Defaults to 320px
+ */
+labelColumnWidth?: number = 320
+
+/**
+ * Whether to show the first column&#39;s label in the header pill
+ */
+showFirstColumnHeader?: boolean = false</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { FlexibleTable, TableXIcon } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;FlexibleTable columns={columns} data={vinData} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Loading</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Loading = () =&gt; &lt;FlexibleTable columns={columns} data={[]} isLoading /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Empty</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Empty = () =&gt; &lt;FlexibleTable
+    columns={columns}
+    data={[]}
+    emptyMessage=&quot;No data available for this API.&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Header">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Header</h2>
+      <div class="badges">
+        <label for="c-11-example-header-props" class="badge ok as-toggle">4 prop types</label>
+        <label for="c-11-example-header-info" class="badge info as-toggle">1 info</label>
+        <label for="c-11-example-header-stories" class="badge ok as-toggle">2 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/stories/Header.stories.ts">example-header · ./src/stories/Header.stories.ts</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-11-example-header-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-11-example-header-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-11-example-header-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">4 prop types</span>
+            </div>
+            <pre><code>Component: src/stories/Header.tsx::Header</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>onCreateAccount?: () =&gt; void
+
+onLogin?: () =&gt; void
+
+onLogout?: () =&gt; void
+
+user?: {
+  name: string;
+}</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Header } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Logged In</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LoggedIn = () =&gt; &lt;Header
+    onLogin={fn()}
+    onLogout={fn()}
+    onCreateAccount={fn()}
+    user={{
+      name: &#39;Jane Doe&#39;,
+    }} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Logged Out</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LoggedOut = () =&gt; &lt;Header onLogin={fn()} onLogout={fn()} onCreateAccount={fn()} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="HeadingRenderer">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> HeadingRenderer</h2>
+      <div class="badges">
+        <label for="c-12-ui-intro-sub-components-headingrenderer-props" class="badge ok as-toggle">5 prop types</label>
+        <label for="c-12-ui-intro-sub-components-headingrenderer-info" class="badge info as-toggle">1 info</label>
+        <label for="c-12-ui-intro-sub-components-headingrenderer-stories" class="badge ok as-toggle">4 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/intro/heading-renderer.stories.tsx">ui-intro-sub-components-headingrenderer · ./src/components/intro/heading-renderer.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-12-ui-intro-sub-components-headingrenderer-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-12-ui-intro-sub-components-headingrenderer-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-12-ui-intro-sub-components-headingrenderer-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">5 prop types</span>
+            </div>
+            <pre><code>Component: src/components/intro/heading-renderer.tsx::HeadingRenderer</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>as?: &quot;h1&quot; | &quot;h2&quot; | &quot;h3&quot; = &quot;h2&quot;
+
+className?: string
+
+highlight?: string
+
+text: string
+
+theme?: &quot;dark&quot; | &quot;light&quot; = &quot;dark&quot;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { HeadingRenderer } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;HeadingRenderer
+    heading=&quot;Supercharge Your Vehicle Data Workflow&quot;
+    tagline=&quot;API Solutions&quot;
+    alignment=&quot;left&quot;
+    theme=&quot;dark&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Center Aligned</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const CenterAligned = () =&gt; &lt;HeadingRenderer
+    heading=&quot;The World&#39;s Most Accurate VIN Database&quot;
+    tagline=&quot;Global Coverage&quot;
+    alignment=&quot;center&quot;
+    theme=&quot;dark&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Light Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LightTheme = () =&gt; &lt;HeadingRenderer
+    heading=&quot;Build Faster with Real-time Vehicle Insights&quot;
+    tagline=&quot;Developer First&quot;
+    alignment=&quot;left&quot;
+    theme=&quot;light&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">No Tagline</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const NoTagline = () =&gt; &lt;HeadingRenderer
+    heading=&quot;Empowering the Future of Automotive Intelligence&quot;
+    alignment=&quot;left&quot;
+    theme=&quot;dark&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="IntroSection">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> IntroSection</h2>
+      <div class="badges">
+        <label for="c-13-ui-introsection-props" class="badge ok as-toggle">19 prop types</label>
+        <label for="c-13-ui-introsection-info" class="badge info as-toggle">1 info</label>
+        <label for="c-13-ui-introsection-stories" class="badge ok as-toggle">4 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/intro-section.stories.tsx">ui-introsection · ./src/components/intro-section.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-13-ui-introsection-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-13-ui-introsection-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-13-ui-introsection-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">19 prop types</span>
+            </div>
+            <pre><code>Component: src/components/intro-section.tsx::IntroSection</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>ctas?: {
+  text: string;
+  href: string;
+  variant?: &quot;primary&quot; | &quot;outline&quot; | &quot;ghost&quot;;
+}[]
+
+features?: {
+  stat?: string;
+  text: string;
+  description?: string;
+  icon?: string;
+}[]
+
+heading: string
+
+headingHighlight?: string
+
+listHeading?: string
+
+listItems?: { text: string }[]
+
+listStyle?: &quot;numbers&quot; | &quot;bullets&quot;
+
+logos?: {
+  image: { url: string; alt?: string };
+  link?: string;
+}[]
+
+media?: IntroMedia
+
+quaternaryRichText?: string
+
+quinquenaryRichText?: string
+
+richText: string
+
+secondaryRichText?: string
+
+sectionTwoHeading?: string
+
+spacingSize?: &quot;standard&quot; | &quot;large&quot; | &quot;compact&quot;
+
+subheading?: string
+
+tertiaryRichText?: string
+
+theme?: &quot;dark&quot; | &quot;light&quot;
+
+variant: | &quot;split-media-right&quot;
+| &quot;split-media-left&quot;
+| &quot;centered&quot;
+| &quot;text-only&quot;
+| &quot;feature-split&quot;
+| &quot;heading-top-split&quot;
+| &quot;code-split&quot;
+| &quot;feature-grid-split&quot;
+| &quot;stat-cards&quot;
+| &quot;text-stack&quot;
+| &quot;mixed-content&quot;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { IntroSection } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Electric Vehicle Specs</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">DEFAULT: SPLIT MEDIA RIGHT Scenario: Electric Vehicle VIN Specifications</div>
+              <pre><code>const ElectricVehicleSpecs = () =&gt; &lt;IntroSection
+    variant=&quot;split-media-right&quot;
+    theme=&quot;dark&quot;
+    subheading=&quot;Vehicle Data API&quot;
+    heading=&quot;Access Professional Electric Vehicle Specifications&quot;
+    headingHighlight=&quot;Specifications&quot;
+    richText=&quot;&lt;p&gt;The &lt;strong&gt;Electric Vehicle Specifications API&lt;/strong&gt; provides comprehensive technical data for any EV or plug-in hybrid. Access over 50+ unique data points including battery capacity, charging speeds, and real-world range.&lt;/p&gt;&quot;
+    ctas={[
+      { text: &quot;Try Playground&quot;, href: &quot;#&quot;, variant: &quot;primary&quot; },
+      { text: &quot;Documentation&quot;, href: &quot;#&quot;, variant: &quot;outline&quot; },
+    ]}
+    media={{
+      type: &quot;code-snippet&quot;,
+      image: &quot;https://images.unsplash.com/photo-1593941707882-a5bba14938c7?q=80&amp;w=1000&amp;auto=format&amp;fit=crop&quot;,
+      code: `{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;data&quot;: {
+    &quot;make&quot;: &quot;Tesla&quot;,
+    &quot;model&quot;: &quot;Model Y&quot;,
+    &quot;battery&quot;: &quot;75 kWh&quot;,
+    &quot;charging&quot;: &quot;250 kW Max&quot;
+  }
+}`,
+      alt: &quot;Tesla Model Y Specifications&quot;,
+    }} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Market Impact</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">STAT CARDS Scenario: Market Analytics &amp; Impact</div>
+              <pre><code>const MarketImpact = () =&gt; &lt;IntroSection
+    variant=&quot;stat-cards&quot;
+    theme=&quot;dark&quot;
+    heading=&quot;Scale Your Business with Real-Time Market Intelligence&quot;
+    headingHighlight=&quot;Market Intelligence&quot;
+    richText=&quot;&lt;p&gt;Our APIs process millions of automotive transactions daily, providing you with the most accurate market-level pricing and demand metrics in the industry.&lt;/p&gt;&quot;
+    features={[
+      { 
+        stat: &quot;88%&quot;, 
+        text: &quot;Efficiency Boost&quot;, 
+        description: &quot;Automate 88% of your manual VIN data entry tasks.&quot; 
+      },
+      { 
+        stat: &quot;99.9%&quot;, 
+        text: &quot;Data Uptime&quot;, 
+        description: &quot;Robust infrastructure with enterprise-grade SLA guarantee.&quot; 
+      },
+      { 
+        stat: &quot;1.2s&quot;, 
+        text: &quot;Fast Latency&quot;, 
+        description: &quot;Industry-leading sub-second average response times.&quot; 
+      },
+    ]}
+    ctas={[
+      { text: &quot;Get API Keys&quot;, href: &quot;#&quot;, variant: &quot;primary&quot; },
+    ]} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Fleet Operations</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">FEATURE GRID Scenario: Fleet Operations System</div>
+              <pre><code>const FleetOperations = () =&gt; &lt;IntroSection
+    variant=&quot;feature-grid-split&quot;
+    theme=&quot;dark&quot;
+    subheading=&quot;Enterprise Logistics&quot;
+    heading=&quot;Complete Control Over Your Commercial Fleet&quot;
+    headingHighlight=&quot;Complete Control&quot;
+    richText=&quot;&lt;p&gt;Bridge the gap between logistics and data. Our fleet integration tools allow you to track titles, maintenance records, and market value fluctuations across thousands of units instantly.&lt;/p&gt;&quot;
+    features={[
+        { 
+            text: &quot;Global Coverage&quot;, 
+            description: &quot;Access data for 100+ countries with localized formatting.&quot; 
+        },
+        { 
+            text: &quot;Title Monitoring&quot;, 
+            description: &quot;Real-time alerts for salvage, theft, or lien changes.&quot; 
+        }
+    ]}
+    media={{
+      type: &quot;feature-grid-card&quot;,
+      title: &quot;Active Data Points per VIN:&quot;,
+      items: [
+        { text: &quot;NMVTIS Title Status&quot; },
+        { text: &quot;Open Recall Checks&quot; },
+        { text: &quot;Auction History&quot; },
+        { text: &quot;Market Value Pricing&quot; },
+        { text: &quot;Lien &amp; Lease Records&quot; },
+        { text: &quot;Owner Identification&quot; },
+        { text: &quot;Safety Ratings&quot; },
+        { text: &quot;Emissions Data&quot; },
+      ],
+    }}
+    ctas={[
+      { text: &quot;Schedule Demo&quot;, href: &quot;#&quot;, variant: &quot;primary&quot; },
+    ]} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Developer Experience</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              <div class="hint">CODE DASHBOARD Scenario: Professional VIN History REST API</div>
+              <pre><code>const DeveloperExperience = () =&gt; &lt;IntroSection
+    variant=&quot;split-media-right&quot;
+    theme=&quot;dark&quot;
+    subheading=&quot;Developer Playground&quot;
+    heading=&quot;Simple Integration. Powerful Results.&quot;
+    headingHighlight=&quot;Simple Integration&quot;
+    richText=&quot;&lt;p&gt;Developers love our &lt;strong&gt;RESTful APIs&lt;/strong&gt; because they are built with modern JSON standards and thorough versioning. No more dealing with inconsistent XML or legacy SOAP protocols.&lt;/p&gt;&quot;
+    media={{
+      type: &quot;code-dashboard&quot;,
+      code: JSON.stringify({
+        vin: &quot;5TQYK30D8FS503804&quot;,
+        status: &quot;success&quot;,
+        history: {
+          registrations: 4,
+          accidents: 0,
+          services: 12
+        }
+      }, null, 2),
+    }}
+    ctas={[
+      { text: &quot;Start Coding&quot;, href: &quot;#&quot;, variant: &quot;primary&quot; },
+    ]} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="LogoGrid">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> LogoGrid</h2>
+      <div class="badges">
+        <label for="c-14-ui-intro-sub-components-logogrid-props" class="badge ok as-toggle">2 prop types</label>
+        <label for="c-14-ui-intro-sub-components-logogrid-info" class="badge info as-toggle">1 info</label>
+        <label for="c-14-ui-intro-sub-components-logogrid-stories" class="badge ok as-toggle">2 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/intro/logo-grid.stories.tsx">ui-intro-sub-components-logogrid · ./src/components/intro/logo-grid.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-14-ui-intro-sub-components-logogrid-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-14-ui-intro-sub-components-logogrid-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-14-ui-intro-sub-components-logogrid-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">2 prop types</span>
+            </div>
+            <pre><code>Component: src/components/intro/logo-grid.tsx::LogoGrid</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string
+
+logos: Logo[]</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { LogoGrid } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;LogoGrid logos={mockLogos} /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Limited Logos</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LimitedLogos = () =&gt; &lt;LogoGrid logos={mockLogos.slice(0, 3)} /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="LogoTicker">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> LogoTicker</h2>
+      <div class="badges">
+        <label for="c-15-home-logoticker-props" class="badge ok as-toggle">4 prop types</label>
+        <label for="c-15-home-logoticker-info" class="badge info as-toggle">1 info</label>
+        <label for="c-15-home-logoticker-stories" class="badge ok as-toggle">3 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/home/logo-ticker.stories.tsx">home-logoticker · ./src/components/home/logo-ticker.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-15-home-logoticker-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-15-home-logoticker-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-15-home-logoticker-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">4 prop types</span>
+            </div>
+            <pre><code>Component: src/components/home/logo-ticker.tsx::LogoTicker</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string = &quot;&quot;
+
+headingPrimary?: string = &quot;Trusted by&quot;
+
+headingSecondary?: string = &quot;Teams at&quot;
+
+logoSrc?: string = &quot;/images/logos-marquee.svg&quot;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { LogoTicker } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Default</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const Default = () =&gt; &lt;LogoTicker
+    headingPrimary=&quot;Trusted by&quot;
+    headingSecondary=&quot;Teams at&quot;
+    logoSrc=&quot;/images/logos-marquee.svg&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Custom Content</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const CustomContent = () =&gt; &lt;LogoTicker headingPrimary=&quot;Empowering&quot; headingSecondary=&quot;Developers at&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Custom Logo</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const CustomLogo = () =&gt; &lt;LogoTicker
+    headingPrimary=&quot;Featured in&quot;
+    headingSecondary=&quot;Top Publications&quot;
+    logoSrc=&quot;/images/logos-marquee.svg&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="NumberedBulletList">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> NumberedBulletList</h2>
+      <div class="badges">
+        <label for="c-16-ui-intro-sub-components-numberedbulletlist-props" class="badge ok as-toggle">4 prop types</label>
+        <label for="c-16-ui-intro-sub-components-numberedbulletlist-info" class="badge info as-toggle">1 info</label>
+        <label for="c-16-ui-intro-sub-components-numberedbulletlist-stories" class="badge ok as-toggle">2 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/intro/numbered-bullet-list.stories.tsx">ui-intro-sub-components-numberedbulletlist · ./src/components/intro/numbered-bullet-list.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-16-ui-intro-sub-components-numberedbulletlist-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-16-ui-intro-sub-components-numberedbulletlist-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-16-ui-intro-sub-components-numberedbulletlist-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">4 prop types</span>
+            </div>
+            <pre><code>Component: src/components/intro/numbered-bullet-list.tsx::NumberedBulletList</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string
+
+items: ListItem[]
+
+style?: &quot;numbers&quot; | &quot;bullets&quot; = &quot;numbers&quot;
+
+theme?: &quot;dark&quot; | &quot;light&quot; = &quot;dark&quot;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { NumberedBulletList } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Dark Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const DarkTheme = () =&gt; &lt;NumberedBulletList items={mockItems} theme=&quot;dark&quot; style=&quot;numbers&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Light Theme Bullets</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LightThemeBullets = () =&gt; &lt;NumberedBulletList items={mockItems} theme=&quot;light&quot; style=&quot;bullets&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="Page">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Page</h2>
+      <div class="badges">
+        
+        <label for="c-17-example-page-info" class="badge info as-toggle">1 info</label>
+        <label for="c-17-example-page-stories" class="badge ok as-toggle">2 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/stories/Page.stories.ts">example-page · ./src/stories/Page.stories.ts</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-17-example-page-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-17-example-page-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { Page } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Logged Out</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LoggedOut = () =&gt; &lt;Page /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Logged In</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LoggedIn = () =&gt; &lt;Page /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="StatCardsGrid">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> StatCardsGrid</h2>
+      <div class="badges">
+        <label for="c-18-ui-intro-sub-components-statcardsgrid-props" class="badge ok as-toggle">3 prop types</label>
+        <label for="c-18-ui-intro-sub-components-statcardsgrid-info" class="badge info as-toggle">1 info</label>
+        <label for="c-18-ui-intro-sub-components-statcardsgrid-stories" class="badge ok as-toggle">2 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/intro/stat-cards-grid.stories.tsx">ui-intro-sub-components-statcardsgrid · ./src/components/intro/stat-cards-grid.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-18-ui-intro-sub-components-statcardsgrid-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-18-ui-intro-sub-components-statcardsgrid-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-18-ui-intro-sub-components-statcardsgrid-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">3 prop types</span>
+            </div>
+            <pre><code>Component: src/components/intro/stat-cards-grid.tsx::StatCardsGrid</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string
+
+features: StatCard[]
+
+theme?: &quot;dark&quot; | &quot;light&quot; = &quot;dark&quot;</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { StatCardsGrid } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Dark Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const DarkTheme = () =&gt; &lt;StatCardsGrid features={mockFeatures} theme=&quot;dark&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Light Theme</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const LightTheme = () =&gt; &lt;StatCardsGrid features={mockFeatures} theme=&quot;light&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+<article
+  class="card 
+  no-error 
+  has-info 
+  no-story-error
+  no-doc-error"
+  role="listitem"
+  aria-label="VisualContent">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> VisualContent</h2>
+      <div class="badges">
+        <label for="c-19-ui-intro-sub-components-visualcontent-props" class="badge ok as-toggle">4 prop types</label>
+        <label for="c-19-ui-intro-sub-components-visualcontent-info" class="badge info as-toggle">1 info</label>
+        <label for="c-19-ui-intro-sub-components-visualcontent-stories" class="badge ok as-toggle">3 stories</label>
+        
+      </div>
+    </div>
+    <div class="meta" title="./src/components/intro/visual-content.stories.tsx">ui-intro-sub-components-visualcontent · ./src/components/intro/visual-content.stories.tsx</div>
+    
+    
+    
+  </div>
+
+  <!-- ⬇️ Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="c-19-ui-intro-sub-components-visualcontent-info" class="tg tg-info" type="checkbox" hidden />
+  <input id="c-19-ui-intro-sub-components-visualcontent-stories" class="tg tg-stories" type="checkbox" hidden />
+  
+  <input id="c-19-ui-intro-sub-components-visualcontent-props" class="tg tg-props" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-info">
+          
+    <div class="note info">
+      <div class="note-title">Info</div>
+      <div class="note-body">No description found. Write a jsdoc comment such as /** Component description */.</div>
+    </div>
+        </div>
+    
+        <div class="panel panel-props">
+          <div class="note ok">
+            <div class="row">
+              <span class="ex-name">Prop types <small>(react-docgen)</small></span>
+              <span class="badge ok">4 prop types</span>
+            </div>
+            <pre><code>Component: src/components/intro/visual-content.tsx::VisualContent</code></pre>
+            <pre><code>Props:</code></pre>
+            <pre><code>className?: string
+
+media: IntroMedia
+
+theme?: &quot;dark&quot; | &quot;light&quot; = &quot;dark&quot;
+
+variant?: string</code></pre>
+          </div>
+        </div>
+    
+        <div class="panel panel-stories">
+          
+          
+          
+          <div class="note ok">
+                <div class="row">
+                  <span class="ex-name">Imports</span>
+                </div>
+                <pre><code>import { VisualContent } from "vdb-dev";</code></pre>
+              </div>
+          
+          
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Code Dashboard</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const CodeDashboard = () =&gt; &lt;VisualContent
+    media={{
+      type: &quot;code-dashboard&quot;,
+      code: JSON.stringify({
+        vin: &quot;5TQYK30D8FS503804&quot;,
+        make: &quot;Tesla&quot;,
+        model: &quot;Model S&quot;,
+        year: 2023,
+      }, null, 2),
+    }}
+    theme=&quot;dark&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Image Content</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const ImageContent = () =&gt; &lt;VisualContent
+    media={{
+      type: &quot;image&quot;,
+      image: &quot;https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&amp;fit=crop&amp;q=80&amp;w=800&quot;,
+      alt: &quot;Porsche 911 on road&quot;,
+    }}
+    theme=&quot;light&quot; /&gt;;</code></pre>
+            </div>
+            <div class="note ok">
+              <div class="row">
+                <span class="ex-name">Feature Grid</span>
+                <span class="badge ok">story ok</span>
+              </div>
+              
+              
+              <pre><code>const FeatureGrid = () =&gt; &lt;VisualContent
+    media={{
+      type: &quot;feature-grid-card&quot;,
+      title: &quot;Custom Visualization&quot;,
+      items: [
+        { text: &quot;Real-time tracking&quot; },
+        { text: &quot;Global sync&quot; },
+      ],
+    }}
+    theme=&quot;dark&quot; /&gt;;</code></pre>
+            </div>
+        </div>
+    
+  </div>
+</article>
+    </div>
+    
+    <h2 class="section-title">Unattached Docs</h2>
+    <div class="grid" role="list">
+      
+<article
+  class="card is-doc no-doc-error"
+  role="listitem"
+  aria-label="Docs">
+  <div class="head">
+    <div class="title">
+      <h2><span class="status-dot dot-ok"></span> Configure your project</h2>
+      <div class="badges">
+        
+        <label for="doc-0-configure-your-project-docs-content" class="badge ok as-toggle">view content</label>
+      </div>
+    </div>
+    <div class="meta" title="./src/stories/Configure.mdx">configure-your-project--docs · ./src/stories/Configure.mdx</div>
+    
+  </div>
+
+  <!-- Hidden toggles must be siblings BEFORE .panels -->
+  
+  <input id="doc-0-configure-your-project-docs-content" class="tg tg-content" type="checkbox" hidden />
+
+  <div class="panels">
+    
+    
+        <div class="panel panel-content">
+          <div class="mdx-content">
+            <pre><code>import { Meta } from &quot;@storybook/addon-docs/blocks&quot;;
+import Image from &quot;next/image&quot;;
+
+import Github from &quot;./assets/github.svg&quot;;
+import Discord from &quot;./assets/discord.svg&quot;;
+import Youtube from &quot;./assets/youtube.svg&quot;;
+import Tutorials from &quot;./assets/tutorials.svg&quot;;
+import Styling from &quot;./assets/styling.png&quot;;
+import Context from &quot;./assets/context.png&quot;;
+import Assets from &quot;./assets/assets.png&quot;;
+import Docs from &quot;./assets/docs.png&quot;;
+import Share from &quot;./assets/share.png&quot;;
+import FigmaPlugin from &quot;./assets/figma-plugin.png&quot;;
+import Testing from &quot;./assets/testing.png&quot;;
+import Accessibility from &quot;./assets/accessibility.png&quot;;
+import Theming from &quot;./assets/theming.png&quot;;
+import AddonLibrary from &quot;./assets/addon-library.png&quot;;
+
+export const RightArrow = () =&gt; &lt;svg 
+    viewBox=&quot;0 0 14 14&quot; 
+    width=&quot;8px&quot; 
+    height=&quot;14px&quot; 
+    style={{ 
+      marginLeft: &#39;4px&#39;,
+      display: &#39;inline-block&#39;,
+      shapeRendering: &#39;inherit&#39;,
+      verticalAlign: &#39;middle&#39;,
+      fill: &#39;currentColor&#39;,
+      &#39;path fill&#39;: &#39;currentColor&#39;
+    }}
+&gt;
+  &lt;path d=&quot;m11.1 7.35-5.5 5.5a.5.5 0 0 1-.7-.7L10.04 7 4.9 1.85a.5.5 0 1 1 .7-.7l5.5 5.5c.2.2.2.5 0 .7Z&quot; /&gt;
+&lt;/svg&gt;
+
+&lt;Meta title=&quot;Configure your project&quot; /&gt;
+
+&lt;div className=&quot;sb-container&quot;&gt;
+  &lt;div className=&#39;sb-section-title&#39;&gt;
+    # Configure your project
+
+    Because Storybook works separately from your app, you&#39;ll need to configure it for your specific stack and setup. Below, explore guides for configuring Storybook with popular frameworks and tools. If you get stuck, learn how you can ask for help from our community.
+  &lt;/div&gt;
+  &lt;div className=&quot;sb-section&quot;&gt;
+    &lt;div className=&quot;sb-section-item&quot;&gt;
+      &lt;Image
+        src={Styling}
+        alt=&quot;A wall of logos representing different styling technologies&quot;
+        width={0}
+        height={0}
+        style={{ width: &#39;100%&#39;, height: &#39;auto&#39; }}
+      /&gt;
+      &lt;h4 className=&quot;sb-section-item-heading&quot;&gt;Add styling and CSS&lt;/h4&gt;
+      &lt;p className=&quot;sb-section-item-paragraph&quot;&gt;Like with web applications, there are many ways to include CSS within Storybook. Learn more about setting up styling within Storybook.&lt;/p&gt;
+      &lt;a
+        href=&quot;https://storybook.js.org/docs/configure/styling-and-css/?renderer=react&amp;ref=configure&quot;
+        target=&quot;_blank&quot;
+      &gt;Learn more&lt;RightArrow /&gt;&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;div className=&quot;sb-section-item&quot;&gt;
+      &lt;Image 
+        width={0}
+        height={0}
+        style={{ width: &#39;100%&#39;, height: &#39;auto&#39; }}
+        src={Context}
+        alt=&quot;An abstraction representing the composition of data for a component&quot;
+      /&gt;
+      &lt;h4 className=&quot;sb-section-item-heading&quot;&gt;Provide context and mocking&lt;/h4&gt;
+      &lt;p className=&quot;sb-section-item-paragraph&quot;&gt;Often when a story doesn&#39;t render, it&#39;s because your component is expecting a specific environment or context (like a theme provider) to be available.&lt;/p&gt;
+      &lt;a
+        href=&quot;https://storybook.js.org/docs/writing-stories/decorators/?renderer=react&amp;ref=configure#context-for-mocking&quot;
+        target=&quot;_blank&quot;
+      &gt;Learn more&lt;RightArrow /&gt;&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;div className=&quot;sb-section-item&quot;&gt;
+      &lt;Image 
+        width={0}
+        height={0}
+        style={{ width: &#39;100%&#39;, height: &#39;auto&#39; }} 
+        src={Assets} 
+        alt=&quot;A representation of typography and image assets&quot; 
+      /&gt;
+      &lt;div&gt;
+        &lt;h4 className=&quot;sb-section-item-heading&quot;&gt;Load assets and resources&lt;/h4&gt;
+        &lt;p className=&quot;sb-section-item-paragraph&quot;&gt;To link static files (like fonts) to your projects and stories, use the
+        `staticDirs` configuration option to specify folders to load when
+        starting Storybook.&lt;/p&gt;
+        &lt;a
+          href=&quot;https://storybook.js.org/docs/configure/images-and-assets/?renderer=react&amp;ref=configure&quot;
+          target=&quot;_blank&quot;
+        &gt;Learn more&lt;RightArrow /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&quot;sb-container&quot;&gt;
+  &lt;div className=&#39;sb-section-title&#39;&gt;
+    # Do more with Storybook
+
+    Now that you know the basics, let&#39;s explore other parts of Storybook that will improve your experience. This list is just to get you started. You can customise Storybook in many ways to fit your needs.
+  &lt;/div&gt;
+
+  &lt;div className=&quot;sb-section&quot;&gt;
+    &lt;div className=&quot;sb-features-grid&quot;&gt;
+      &lt;div className=&quot;sb-grid-item&quot;&gt;
+        &lt;Image 
+          width={0}
+          height={0}
+          style={{ width: &#39;100%&#39;, height: &#39;auto&#39; }} 
+          src={Docs} 
+          alt=&quot;A screenshot showing the autodocs tag being set, pointing a docs page being generated&quot; 
+        /&gt;
+        &lt;h4 className=&quot;sb-section-item-heading&quot;&gt;Autodocs&lt;/h4&gt;
+        &lt;p className=&quot;sb-section-item-paragraph&quot;&gt;Auto-generate living,
+          interactive reference documentation from your components and stories.&lt;/p&gt;
+        &lt;a
+          href=&quot;https://storybook.js.org/docs/writing-docs/autodocs/?renderer=react&amp;ref=configure&quot;
+          target=&quot;_blank&quot;
+        &gt;Learn more&lt;RightArrow /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+      &lt;div className=&quot;sb-grid-item&quot;&gt;
+        &lt;Image 
+          width={0}
+          height={0}
+          style={{ width: &#39;100%&#39;, height: &#39;auto&#39; }} 
+          src={Share} 
+          alt=&quot;A browser window showing a Storybook being published to a chromatic.com URL&quot; 
+        /&gt;
+        &lt;h4 className=&quot;sb-section-item-heading&quot;&gt;Publish to Chromatic&lt;/h4&gt;
+        &lt;p className=&quot;sb-section-item-paragraph&quot;&gt;Publish your Storybook to review and collaborate with your entire team.&lt;/p&gt;
+        &lt;a
+          href=&quot;https://storybook.js.org/docs/sharing/publish-storybook/?renderer=react&amp;ref=configure#publish-storybook-with-chromatic&quot;
+          target=&quot;_blank&quot;
+        &gt;Learn more&lt;RightArrow /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+      &lt;div className=&quot;sb-grid-item&quot;&gt;
+        &lt;Image 
+          width={0}
+          height={0}
+          style={{ width: &#39;100%&#39;, height: &#39;auto&#39; }} 
+          src={FigmaPlugin} 
+          alt=&quot;Windows showing the Storybook plugin in Figma&quot; 
+        /&gt;
+        &lt;h4 className=&quot;sb-section-item-heading&quot;&gt;Figma Plugin&lt;/h4&gt;
+        &lt;p className=&quot;sb-section-item-paragraph&quot;&gt;Embed your stories into Figma to cross-reference the design and live
+          implementation in one place.&lt;/p&gt;
+        &lt;a
+          href=&quot;https://storybook.js.org/docs/sharing/design-integrations/?renderer=react&amp;ref=configure#embed-storybook-in-figma-with-the-plugin&quot;
+          target=&quot;_blank&quot;
+        &gt;Learn more&lt;RightArrow /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+      &lt;div className=&quot;sb-grid-item&quot;&gt;
+        &lt;Image 
+          width={0}
+          height={0}
+          style={{ width: &#39;100%&#39;, height: &#39;auto&#39; }} 
+          src={Testing} 
+          alt=&quot;Screenshot of tests passing and failing&quot; 
+        /&gt;
+        &lt;h4 className=&quot;sb-section-item-heading&quot;&gt;Testing&lt;/h4&gt;
+        &lt;p className=&quot;sb-section-item-paragraph&quot;&gt;Use stories to test a component in all its variations, no matter how
+          complex.&lt;/p&gt;
+        &lt;a
+          href=&quot;https://storybook.js.org/docs/writing-tests/?renderer=react&amp;ref=configure&quot;
+          target=&quot;_blank&quot;
+        &gt;Learn more&lt;RightArrow /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+      &lt;div className=&quot;sb-grid-item&quot;&gt;
+        &lt;Image 
+          width={0}
+          height={0}
+          style={{ width: &#39;100%&#39;, height: &#39;auto&#39; }} 
+          src={Accessibility} 
+          alt=&quot;Screenshot of accessibility tests passing and failing&quot; 
+        /&gt;
+        &lt;h4 className=&quot;sb-section-item-heading&quot;&gt;Accessibility&lt;/h4&gt;
+        &lt;p className=&quot;sb-section-item-paragraph&quot;&gt;Automatically test your components for a11y issues as you develop.&lt;/p&gt;
+        &lt;a
+          href=&quot;https://storybook.js.org/docs/writing-tests/accessibility-testing/?renderer=react&amp;ref=configure&quot;
+          target=&quot;_blank&quot;
+        &gt;Learn more&lt;RightArrow /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+      &lt;div className=&quot;sb-grid-item&quot;&gt;
+        &lt;Image 
+          width={0}
+          height={0}
+          style={{ width: &#39;100%&#39;, height: &#39;auto&#39; }} 
+          src={Theming} 
+          alt=&quot;Screenshot of Storybook in light and dark mode&quot; 
+        /&gt;
+        &lt;h4 className=&quot;sb-section-item-heading&quot;&gt;Theming&lt;/h4&gt;
+        &lt;p className=&quot;sb-section-item-paragraph&quot;&gt;Theme Storybook&#39;s UI to personalize it to your project.&lt;/p&gt;
+        &lt;a
+          href=&quot;https://storybook.js.org/docs/configure/theming/?renderer=react&amp;ref=configure&quot;
+          target=&quot;_blank&quot;
+        &gt;Learn more&lt;RightArrow /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;div className=&#39;sb-addon&#39;&gt;
+  &lt;div className=&#39;sb-addon-text&#39;&gt;
+    &lt;h4&gt;Addons&lt;/h4&gt;
+    &lt;p className=&quot;sb-section-item-paragraph&quot;&gt;Integrate your tools with Storybook to connect workflows.&lt;/p&gt;
+    &lt;a
+        href=&quot;https://storybook.js.org/addons/?ref=configure&quot;
+        target=&quot;_blank&quot;
+      &gt;Discover all addons&lt;RightArrow /&gt;&lt;/a&gt;
+  &lt;/div&gt;
+  &lt;div className=&#39;sb-addon-img&#39;&gt;
+    &lt;Image 
+      width={650}
+      height={347}
+      src={AddonLibrary} 
+      alt=&quot;Integrate your tools with Storybook to connect workflows.&quot; 
+    /&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div className=&quot;sb-section sb-socials&quot;&gt;
+    &lt;div className=&quot;sb-section-item&quot;&gt;
+      &lt;Image 
+        width={32}
+        height={32}
+        layout=&quot;fixed&quot;
+        src={Github} 
+        alt=&quot;Github logo&quot; 
+        className=&quot;sb-explore-image&quot;
+      /&gt;
+      Join our contributors building the future of UI development.
+
+      &lt;a
+        href=&quot;https://github.com/storybookjs/storybook&quot;
+        target=&quot;_blank&quot;
+      &gt;Star on GitHub&lt;RightArrow /&gt;&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;div className=&quot;sb-section-item&quot;&gt;
+      &lt;Image 
+        width={33}
+        height={32}
+        layout=&quot;fixed&quot;
+        src={Discord} 
+        alt=&quot;Discord logo&quot; 
+        className=&quot;sb-explore-image&quot;
+      /&gt;
+      &lt;div&gt;
+        Get support and chat with frontend developers.
+
+        &lt;a
+          href=&quot;https://discord.gg/storybook&quot;
+          target=&quot;_blank&quot;
+        &gt;Join Discord server&lt;RightArrow /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div className=&quot;sb-section-item&quot;&gt;
+      &lt;Image 
+        width={32}
+        height={32}
+        layout=&quot;fixed&quot;
+        src={Youtube} 
+        alt=&quot;Youtube logo&quot; 
+        className=&quot;sb-explore-image&quot;
+      /&gt;
+      &lt;div&gt;
+        Watch tutorials, feature previews and interviews.
+
+        &lt;a
+          href=&quot;https://www.youtube.com/@chromaticui&quot;
+          target=&quot;_blank&quot;
+        &gt;Watch on YouTube&lt;RightArrow /&gt;&lt;/a&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div className=&quot;sb-section-item&quot;&gt;
+      &lt;Image 
+        width={33}
+        height={32}
+        layout=&quot;fixed&quot;
+        src={Tutorials} 
+        alt=&quot;A book&quot; 
+        className=&quot;sb-explore-image&quot;
+      /&gt;
+      &lt;p&gt;Follow guided walkthroughs on for key workflows.&lt;/p&gt;
+
+      &lt;a
+          href=&quot;https://storybook.js.org/tutorials/?ref=configure&quot;
+          target=&quot;_blank&quot;
+        &gt;Discover tutorials&lt;RightArrow /&gt;&lt;/a&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+  {`
+  .sb-container {
+    margin-bottom: 48px;
+  }
+
+  .sb-section {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+  }
+
+  img {
+    object-fit: cover;
+  }
+
+  .sb-section-title {
+    margin-bottom: 32px;
+  }
+
+  .sb-section a:not(h1 a, h2 a, h3 a) {
+    font-size: 14px;
+  }
+
+  .sb-section-item, .sb-grid-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sb-section-item-heading {
+    padding-top: 20px !important;
+    padding-bottom: 5px !important;
+    margin: 0 !important;
+  }
+  .sb-section-item-paragraph {
+    margin: 0;
+    padding-bottom: 10px;
+  }
+
+  .sb-chevron {
+    margin-left: 5px;
+  }
+
+  .sb-features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 32px 20px;
+  }
+
+  .sb-socials {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .sb-socials p {
+    margin-bottom: 10px;
+  }
+
+  .sb-explore-image {
+    max-height: 32px;
+    align-self: flex-start;
+  }
+
+  .sb-addon {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    background-color: #EEF3F8;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    background: #EEF3F8;
+    height: 180px;
+    margin-bottom: 48px;
+    overflow: hidden;
+  }
+
+  .sb-addon-text {
+    padding-left: 48px;
+    max-width: 240px;
+  }
+
+  .sb-addon-text h4 {
+    padding-top: 0px;
+  }
+
+  .sb-addon-img {
+    position: absolute;
+    left: 345px;
+    top: 0;
+    height: 100%;
+    width: 200%;
+    overflow: hidden;
+  }
+
+  .sb-addon-img img {
+    width: 650px;
+    transform: rotate(-15deg);
+    margin-left: 40px;
+    margin-top: -72px;
+    box-shadow: 0 0 1px rgba(255, 255, 255, 0);
+    backface-visibility: hidden;
+  }
+
+  @media screen and (max-width: 800px) {
+    .sb-addon-img {
+      left: 300px;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    .sb-section {
+      flex-direction: column;
+    }
+
+    .sb-features-grid {
+      grid-template-columns: repeat(1, 1fr);
+    }
+
+    .sb-socials {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .sb-addon {
+      height: 280px;
+      align-items: flex-start;
+      padding-top: 32px;
+      overflow: hidden;
+    }
+
+    .sb-addon-text {
+      padding-left: 24px;
+    }
+
+    .sb-addon-img {
+      right: 0;
+      left: 0;
+      top: 130px;
+      bottom: 0;
+      overflow: hidden;
+      height: auto;
+      width: 124%;
+    }
+
+    .sb-addon-img img {
+      width: 1200px;
+      transform: rotate(-12deg);
+      margin-left: 0;
+      margin-top: 48px;
+      margin-bottom: -40px;
+      margin-left: -24px;
+    }
+  }
+  `}
+&lt;/style&gt;
+</code></pre>
+          </div>
+        </div>
+  </div>
+</article>
+    </div>
+    
+  </div>
+</main>
+</body>
+</html>  
